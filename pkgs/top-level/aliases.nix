@@ -66,6 +66,7 @@ mapAliases ({
   buildGo112Module = throw "buildGo112Module has been removed"; # added 2020-04-26
   bundler_HEAD = bundler; # added 2015-11-15
   cantarell_fonts = cantarell-fonts; # added 2018-03-03
+  casperjs = throw "casperjs has been removed, it was abandoned by upstream and broken.";
   catfish = xfce.catfish; # added 2019-12-22
   cgmanager = throw "cgmanager was deprecated by lxc and therefore removed from nixpkgs."; # added 2020-06-05
   checkbashism = checkbashisms; # added 2016-08-16
@@ -87,6 +88,7 @@ mapAliases ({
   cpp-gsl = microsoft_gsl; # added 2019-05-24
   cupsBjnp = cups-bjnp; # added 2016-01-02
   cups_filters = cups-filters; # added 2016-08
+  cquery = throw "cquery has been removed because it is abandoned by upstream. Consider switching to clangd or ccls instead."; # added 2020-06-15
   cv = progress; # added 2015-09-06
   d1x_rebirth = dxx-rebirth; # added 2018-04-25
   d2x_rebirth = dxx-rebirth; # added 2018-04-25
@@ -153,6 +155,7 @@ mapAliases ({
   fuseki = apache-jena-fuseki; # added 2018-04-25
   fusesmb = throw "fusesmb is abandoned by upstream"; # added 2019-10-15
   fwupdate = throw "fwupdate was merged into fwupd"; # added 2020-05-19
+  g4py = python3Packages.geant4; # added 2020-06-06
   gccApple = throw "gccApple is no longer supported"; # added 2018-04-25
   gdb-multitarget = gdb; # added 2017-11-13
   gdk_pixbuf = gdk-pixbuf; # added 2019-05-22
@@ -198,7 +201,6 @@ mapAliases ({
   gupnp_igd = gupnp-igd; # added 2018-02-25
   gupnptools = gupnp-tools;  # added 2015-12-19
   gutenberg = zola;  # added 2018-11-17
-  hamster-time-traker = throw "hamster-time-tracker has been removed from nixpkgs, as it was unmaintained."; # added 2019-12-10
   heimdalFull = heimdal; # added 2018-05-01
   hepmc = hepmc2; # added 2019-08-05
   hexen = throw "hexen (SDL port) has been removed: Abandoned by upstream."; # added 2019-12-11
@@ -247,8 +249,10 @@ mapAliases ({
   libgumbo = gumbo; # added 2018-01-21
   libGL_driver = mesa.drivers;
   libintlOrEmpty = stdenv.lib.optional (!stdenv.isLinux || stdenv.hostPlatform.libc != "glibc") gettext; # added 2018-03-14
+  libjpeg_drop = libjpeg_original; # added 2020-06-05
   libjson_rpc_cpp = libjson-rpc-cpp; # added 2017-02-28
   liblapackWithoutAtlas = lapack-reference; # added 2018-11-05
+  liblastfm = libsForQt5.liblastfm; # added 2020-06-14
   liblrdf = lrdf; # added 2018-04-25
   libqrencode = qrencode;  # added 2019-01-01
   librdf = lrdf; # added 2020-03-22
@@ -308,7 +312,7 @@ mapAliases ({
   msf = metasploit; # added 2018-04-25
   libmsgpack = msgpack; # added 2018-08-17
   mssys = ms-sys; # added 2015-12-13
-  mpv-with-scripts = throw "Use wrapMpv for editing the environment of mpv"; # added 2012-05-22
+  mpv-with-scripts = self.wrapMpv self.mpv-unwrapped { }; # added 2020-05-22
   multipath_tools = multipath-tools;  # added 2016-01-21
   mupen64plus1_5 = mupen64plus; # added 2016-02-12
   mysqlWorkbench = mysql-workbench; # added 2017-01-19

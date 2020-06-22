@@ -119,6 +119,7 @@ in
   installed-tests = pkgs.recurseIntoAttrs (handleTest ./installed-tests {});
   gocd-agent = handleTest ./gocd-agent.nix {};
   gocd-server = handleTest ./gocd-server.nix {};
+  go-neb = handleTest ./go-neb.nix {};
   google-oslogin = handleTest ./google-oslogin {};
   grafana = handleTest ./grafana.nix {};
   graphite = handleTest ./graphite.nix {};
@@ -178,6 +179,8 @@ in
   limesurvey = handleTest ./limesurvey.nix {};
   login = handleTest ./login.nix {};
   loki = handleTest ./loki.nix {};
+  lxd = handleTest ./lxd.nix {};
+  lxd-nftables = handleTest ./lxd-nftables.nix {};
   #logstash = handleTest ./logstash.nix {};
   lorri = handleTest ./lorri/default.nix {};
   magnetico = handleTest ./magnetico.nix {};
@@ -273,6 +276,7 @@ in
   prosody = handleTest ./xmpp/prosody.nix {};
   prosodyMysql = handleTest ./xmpp/prosody-mysql.nix {};
   proxy = handleTest ./proxy.nix {};
+  qboot = handleTestOn ["x86_64-linux" "i686-linux"] ./qboot.nix {};
   quagga = handleTest ./quagga.nix {};
   quorum = handleTest ./quorum.nix {};
   rabbitmq = handleTest ./rabbitmq.nix {};

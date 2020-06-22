@@ -853,6 +853,8 @@ in {
 
   itanium_demangler = callPackage ../development/python-modules/itanium_demangler { };
 
+  iterm2 = callPackage ../development/python-modules/iterm2 { };
+
   janus = callPackage ../development/python-modules/janus { };
 
   jc = callPackage ../development/python-modules/jc { };
@@ -1253,6 +1255,8 @@ in {
   pynanoleaf = callPackage ../development/python-modules/pynanoleaf { };
 
   pynisher = callPackage ../development/python-modules/pynisher { };
+
+  pynput = callPackage ../development/python-modules/pynput { };
 
   pyparser = callPackage ../development/python-modules/pyparser { };
 
@@ -1923,7 +1927,9 @@ in {
 
   bids-validator = callPackage ../development/python-modules/bids-validator { };
 
-  binwalk = callPackage ../development/python-modules/binwalk { };
+  binwalk = callPackage ../development/python-modules/binwalk {
+    pyqtgraph = null;
+  };
 
   binwalk-full = appendToName "full" (self.binwalk.override {
     pyqtgraph = self.pyqtgraph;
@@ -1997,6 +2003,8 @@ in {
     pythonProtobuf = self.protobuf;
   };
 
+  citeproc-py = callPackage ../development/python-modules/citeproc-py { };
+
   colorcet = callPackage ../development/python-modules/colorcet { };
 
   coloredlogs = callPackage ../development/python-modules/coloredlogs { };
@@ -2066,6 +2074,8 @@ in {
   defusedxml = callPackage ../development/python-modules/defusedxml {};
 
   dodgy = callPackage ../development/python-modules/dodgy { };
+
+  duecredit = callPackage ../development/python-modules/duecredit { };
 
   dugong = callPackage ../development/python-modules/dugong {};
 
@@ -2616,6 +2626,8 @@ in {
 
   libais = callPackage ../development/python-modules/libais { };
 
+  libevdev = callPackage ../development/python-modules/libevdev { };
+
   libfdt = toPythonModule (pkgs.dtc.override {
     inherit python;
     pythonSupport = true;
@@ -2801,6 +2813,8 @@ in {
   faker = callPackage ../development/python-modules/faker { };
 
   fake_factory = callPackage ../development/python-modules/fake_factory { };
+
+  fake-useragent = callPackage ../development/python-modules/fake-useragent { };
 
   factory_boy = callPackage ../development/python-modules/factory_boy { };
 
@@ -3238,6 +3252,8 @@ in {
 
   plaster-pastedeploy = callPackage ../development/python-modules/plaster-pastedeploy {};
 
+  playsound = callPackage ../development/python-modules/playsound { };
+
   plexapi = callPackage ../development/python-modules/plexapi { };
 
   plexauth = callPackage ../development/python-modules/plexauth { };
@@ -3321,6 +3337,8 @@ in {
   python-axolotl = callPackage ../development/python-modules/python-axolotl { };
 
   python-axolotl-curve25519 = callPackage ../development/python-modules/python-axolotl-curve25519 { };
+
+  python-pam = callPackage ../development/python-modules/python-pam { };
 
   pythonix = callPackage ../development/python-modules/pythonix {
     inherit (pkgs) meson pkgconfig;
@@ -3444,6 +3462,8 @@ in {
 
   samplerate = callPackage ../development/python-modules/samplerate { };
 
+  screeninfo = callPackage ../development/python-modules/screeninfo { };
+
   ssdeep = callPackage ../development/python-modules/ssdeep { };
 
   ssdp = callPackage ../development/python-modules/ssdp { };
@@ -3465,6 +3485,8 @@ in {
   repoze_sphinx_autointerface =  callPackage ../development/python-modules/repoze_sphinx_autointerface { };
 
   setuptools-git = callPackage ../development/python-modules/setuptools-git { };
+
+  setuptools-lint = callPackage ../development/python-modules/setuptools-lint { };
 
   sievelib = callPackage ../development/python-modules/sievelib { };
 
@@ -3885,6 +3907,11 @@ in {
   });
 
   gdrivefs = callPackage ../development/python-modules/gdrivefs { };
+
+  geant4 = disabledIf (!isPy3k) (toPythonModule (pkgs.geant4.override {
+    enablePython = true;
+    python3 = python;
+  }));
 
   genshi = callPackage ../development/python-modules/genshi { };
 
@@ -5086,9 +5113,14 @@ in {
 
   pyviz-comms = callPackage ../development/python-modules/pyviz-comms { };
 
-  pillow = callPackage ../development/python-modules/pillow {
-    inherit (pkgs) freetype libjpeg zlib libtiff libwebp tcl lcms2 tk;
-    inherit (pkgs.xorg) libX11;
+  pillow = if isPy27 then
+    callPackage ../development/python-modules/pillow/6.nix {
+      inherit (pkgs) freetype libjpeg zlib libtiff libwebp tcl lcms2 tk;
+      inherit (pkgs.xorg) libX11;
+    } else
+    callPackage ../development/python-modules/pillow {
+      inherit (pkgs) freetype libjpeg zlib libtiff libwebp tcl lcms2 tk;
+      inherit (pkgs.xorg) libX11;
   };
 
   pkgconfig = callPackage ../development/python-modules/pkgconfig {
@@ -5680,6 +5712,8 @@ in {
 
   Pyro5 = callPackage ../development/python-modules/pyro5 { };
 
+  rnc2rng = callPackage ../development/python-modules/rnc2rng { };
+
   rope = callPackage ../development/python-modules/rope { };
 
   ropper = callPackage ../development/python-modules/ropper { };
@@ -5688,7 +5722,7 @@ in {
 
   rply = callPackage ../development/python-modules/rply {};
 
-  rpm = toPythonModule (pkgs.rpm.override{inherit python;});
+  rpm = disabledIf (!isPy3k) (toPythonModule (pkgs.rpm.override{ inherit python; }));
 
   rpmfluff = callPackage ../development/python-modules/rpmfluff {};
 
@@ -6773,7 +6807,9 @@ in {
 
   jenkins-job-builder = callPackage ../development/python-modules/jenkins-job-builder { };
 
-  dot2tex = callPackage ../development/python-modules/dot2tex { };
+  dot2tex = callPackage ../development/python-modules/dot2tex {
+    inherit (pkgs) graphviz;
+  };
 
   poezio = callPackage ../applications/networking/instant-messengers/poezio {
     inherit (pkgs) pkgconfig;
@@ -6884,6 +6920,12 @@ in {
   queuelib = callPackage ../development/python-modules/queuelib { };
 
   scrapy = callPackage ../development/python-modules/scrapy { };
+
+  scrapy-fake-useragent = callPackage ../development/python-modules/scrapy-fake-useragent { };
+
+  scrapy-deltafetch = callPackage ../development/python-modules/scrapy-deltafetch { };
+
+  scrapy-splash = callPackage ../development/python-modules/scrapy-splash { };
 
   pandocfilters = callPackage ../development/python-modules/pandocfilters { };
 

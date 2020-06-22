@@ -126,6 +126,7 @@
   ./programs/gpaste.nix
   ./programs/gnupg.nix
   ./programs/gphoto2.nix
+  ./programs/hamster.nix
   ./programs/iftop.nix
   ./programs/iotop.nix
   ./programs/java.nix
@@ -334,6 +335,7 @@
   ./services/games/minecraft-server.nix
   ./services/games/minetest-server.nix
   ./services/games/openarena.nix
+  ./services/games/teeworlds.nix
   ./services/games/terraria.nix
   ./services/hardware/acpid.nix
   ./services/hardware/actkbd.nix
@@ -361,7 +363,6 @@
   ./services/hardware/throttled.nix
   ./services/hardware/trezord.nix
   ./services/hardware/triggerhappy.nix
-  ./services/hardware/u2f.nix
   ./services/hardware/udev.nix
   ./services/hardware/udisks2.nix
   ./services/hardware/upower.nix
@@ -601,7 +602,6 @@
   ./services/networking/dhcpcd.nix
   ./services/networking/dhcpd.nix
   ./services/networking/dnscache.nix
-  ./services/networking/dnschain.nix
   ./services/networking/dnscrypt-proxy2.nix
   ./services/networking/dnscrypt-wrapper.nix
   ./services/networking/dnsdist.nix
@@ -624,6 +624,7 @@
   ./services/networking/gdomap.nix
   ./services/networking/git-daemon.nix
   ./services/networking/gnunet.nix
+  ./services/networking/go-neb.nix
   ./services/networking/go-shadowsocks2.nix
   ./services/networking/gogoclient.nix
   ./services/networking/gvpe.nix

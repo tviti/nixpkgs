@@ -5,7 +5,11 @@
    for each package in a separate file: the call to the function would
    be almost as much code as the function itself. */
 
-{config, pkgs, fetchurl, fetchpatch, fetchFromGitHub, stdenv, perl, overrides, buildPerl, shortenPerlShebang}:
+{ config
+, stdenv, buildPackages, pkgs
+, fetchurl, fetchpatch, fetchFromGitHub
+, perl, overrides, buildPerl, shortenPerlShebang
+}:
 
 # cpan2nix assumes that perl-packages.nix will be used only with perl 5.28.2 or above
 assert stdenv.lib.versionAtLeast perl.version "5.28.2";
@@ -3610,7 +3614,7 @@ let
       sha256 = "3cc7126d5841107237a9be2dc5c7fbc167cf3c4b4ce34678a8448b850757014c";
     };
     propagatedBuildInputs = [ ClassMix ];
-    perlPreHook = stdenv.lib.optionalString stdenv.isi686 "export LD=$CC"; # fix undefined reference to `__stack_chk_fail_local'
+    perlPreHook = stdenv.lib.optionalString (stdenv.isi686 || stdenv.isDarwin) "export LD=$CC";
   };
 
   CryptIDEA = buildPerlPackage {
@@ -3730,7 +3734,7 @@ let
       sha256 = "93ebdfaaefcfe9ab683f0121c85f24475d8197f0bcec46018219e4111434dde3";
     };
     propagatedBuildInputs = [ DigestSHA1 ];
-    perlPreHook = stdenv.lib.optionalString stdenv.isi686 "export LD=$CC"; # fix undefined reference to `__stack_chk_fail_local'
+    perlPreHook = stdenv.lib.optionalString (stdenv.isi686 || stdenv.isDarwin) "export LD=$CC";
   };
 
   CryptRijndael = buildPerlPackage {
@@ -6882,6 +6886,7 @@ let
       url = "mirror://cpan/authors/id/X/XA/XAOC/ExtUtils-PkgConfig-1.16.tar.gz";
       sha256 = "bbeaced995d7d8d10cfc51a3a5a66da41ceb2bc04fedcab50e10e6300e801c6e";
     };
+    nativeBuildInputs = [ buildPackages.pkgconfig ];
     propagatedBuildInputs = [ pkgs.pkgconfig ];
     meta = {
       homepage = "http://gtk2-perl.sourceforge.net";
@@ -13850,6 +13855,22 @@ let
     };
     meta = {
       description = "Perl extension for manipulating IPv4/IPv6 addresses";
+    };
+  };
+
+  NetIPLite = buildPerlPackage {
+    pname = "Net-IP-Lite";
+    version = "0.03";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/A/AL/ALEXKOM/Net-IP-Lite-0.03.tar.gz";
+      sha256 = "c9916e6cfaa53be275379ce4b2a550ae176ddfab50dad43b43ed43e8267802a9";
+    };
+    buildInputs = [ TestException ];
+    meta = {
+      homepage = "https://metacpan.org/pod/Net::IP::Lite";
+      description = "Perl extension for manipulating IPv4/IPv6 addresses";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+      maintainers = [ maintainers.sgo ];
     };
   };
 
@@ -21290,6 +21311,22 @@ let
     src = fetchurl {
       url = "mirror://cpan/authors/id/T/TJ/TJMATHER/XML-RegExp-0.04.tar.gz";
       sha256 = "0m7wj00a2kik7wj0azhs1zagwazqh3hlz4255n75q21nc04r06fz";
+    };
+  };
+
+  XMLRPCLite = buildPerlPackage {
+    pname = "XMLRPC-Lite";
+    version = "0.717";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/P/PH/PHRED/XMLRPC-Lite-0.717.tar.gz";
+      sha256 = "0925md6jhzgpsibwgny4my461b2wngm8dhxlcry8pbqzrgrab7rs";
+    };
+    propagatedBuildInputs = [ SOAPLite ];
+    # disable tests that require network
+    preCheck = "rm t/{26-xmlrpc.t,37-mod_xmlrpc.t}";
+    meta = {
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+      description = "Client and server implementation of XML-RPC protocol";
     };
   };
 

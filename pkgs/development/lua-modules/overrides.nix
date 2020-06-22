@@ -40,11 +40,6 @@ with super;
       { name = "CRYPTO"; dep = pkgs.openssl; }
       { name = "OPENSSL"; dep = pkgs.openssl; }
     ];
-
-    # https://github.com/wahern/cqueues/issues/227
-    NIX_CFLAGS_COMPILE = with pkgs.stdenv; lib.optionalString hostPlatform.isDarwin
-      "-DCLOCK_MONOTONIC -DCLOCK_REALTIME";
-
     disabled = luaOlder "5.1" || luaAtLeast "5.4";
     # Upstream rockspec is pointlessly broken into separate rockspecs, per Lua
     # version, which doesn't work well for us, so modify it
@@ -79,6 +74,17 @@ with super;
     nativeBuildInputs = [ pandoc ];
     makeFlags = [ "-C doc" "lua-http.html" "lua-http.3" ];
     */
+  });
+
+  ldbus = super.ldbus.override({
+    extraVariables = {
+      DBUS_DIR="${pkgs.dbus.lib}";
+      DBUS_ARCH_INCDIR="${pkgs.dbus.lib}/lib/dbus-1.0/include";
+      DBUS_INCDIR="${pkgs.dbus.dev}/include/dbus-1.0";
+    };
+    buildInputs = with pkgs; [
+      dbus
+    ];
   });
 
   ljsyscall = super.ljsyscall.override(rec {
