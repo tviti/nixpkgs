@@ -955,6 +955,10 @@ in
 
   libfx2 = with python3Packages; toPythonApplication fx2;
 
+  fastmod = callPackage ../tools/text/fastmod {
+    inherit (darwin.apple_sdk.frameworks) Security;
+  };
+
   fitnesstrax = callPackage ../applications/misc/fitnesstrax/default.nix { };
 
   fxlinuxprintutil = callPackage ../tools/misc/fxlinuxprintutil { };
@@ -1786,7 +1790,7 @@ in
 
   eschalot = callPackage ../tools/security/eschalot { };
 
-  esphome = callPackage ../servers/home-assistant/esphome.nix { };
+  esphome = callPackage ../tools/misc/esphome { };
 
   esptool = callPackage ../tools/misc/esptool { };
 
@@ -9811,7 +9815,7 @@ in
   inherit (callPackage ../development/interpreters/ruby {
     inherit (darwin) libiconv libobjc libunwind;
     inherit (darwin.apple_sdk.frameworks) Foundation;
-    bison = bison_3_5;
+    bison = buildPackages.bison_3_5;
   })
     ruby_2_5
     ruby_2_6
@@ -11421,6 +11425,8 @@ in
   # justStaticExecutables is needed due to https://github.com/NixOS/nix/issues/2990
   cachix = haskell.lib.justStaticExecutables haskellPackages.cachix;
 
+  hercules-ci-agent = callPackage ../development/tools/continuous-integration/hercules-ci-agent { };
+
   niv = haskellPackages.niv.bin;
 
   ormolu = haskellPackages.ormolu.bin;
@@ -12088,7 +12094,9 @@ in
 
   gperftools = callPackage ../development/libraries/gperftools { };
 
-  grab-site = callPackage ../tools/backup/grab-site { };
+  grab-site = callPackage ../tools/backup/grab-site {
+    python3Packages = python37Packages;
+  };
 
   grib-api = callPackage ../development/libraries/grib-api { };
 
@@ -15934,14 +15942,14 @@ in
   nginx = nginxStable;
 
   nginxStable = callPackage ../servers/http/nginx/stable.nix {
-    perl = null;
+    withPerl = false;
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
     modules = [ nginxModules.rtmp nginxModules.dav nginxModules.moreheaders ];
   };
 
   nginxMainline = callPackage ../servers/http/nginx/mainline.nix {
-    perl = null;
+    withPerl = false;
     # We don't use `with` statement here on purpose!
     # See https://github.com/NixOS/nixpkgs/pull/10474/files#r42369334
     modules = [ nginxModules.dav nginxModules.moreheaders ];
@@ -15971,7 +15979,9 @@ in
   openafs = callPackage ../servers/openafs/1.6 { tsmbac = null; ncurses = null; };
   openafs_1_8 = callPackage ../servers/openafs/1.8 { tsmbac = null; ncurses = null; };
 
-  openresty = callPackage ../servers/http/openresty { };
+  openresty = callPackage ../servers/http/openresty {
+    withPerl = false;
+  };
 
   opensmtpd = callPackage ../servers/mail/opensmtpd { };
   opensmtpd-extras = callPackage ../servers/mail/opensmtpd/extras.nix { };
@@ -18828,6 +18838,8 @@ in
 
   autotrace = callPackage ../applications/graphics/autotrace {};
 
+  av-98 = callPackage ../applications/networking/browsers/av-98 { };
+
   avocode = callPackage ../applications/graphics/avocode {};
 
   azpainter = callPackage ../applications/graphics/azpainter { };
@@ -19778,7 +19790,6 @@ in
 
   firefoxPackages = recurseIntoAttrs (callPackage ../applications/networking/browsers/firefox/packages.nix {
     callPackage = pkgs.newScope {
-      inherit (gnome2) libIDL;
       libpng = libpng_apng;
       python = python2;
       gnused = gnused_422;
@@ -19799,8 +19810,6 @@ in
   firefox-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     channel = "release";
     generated = import ../applications/networking/browsers/firefox-bin/release_sources.nix;
-    gconf = pkgs.gnome2.GConf;
-    inherit (pkgs.gnome2) libgnome libgnomeui;
   };
 
   firefox-bin = wrapFirefox firefox-bin-unwrapped {
@@ -19812,8 +19821,6 @@ in
   firefox-beta-bin-unwrapped = firefox-bin-unwrapped.override {
     channel = "beta";
     generated = import ../applications/networking/browsers/firefox-bin/beta_sources.nix;
-    gconf = pkgs.gnome2.GConf;
-    inherit (pkgs.gnome2) libgnome libgnomeui;
   };
 
   firefox-beta-bin = res.wrapFirefox firefox-beta-bin-unwrapped {
@@ -19825,8 +19832,6 @@ in
   firefox-devedition-bin-unwrapped = callPackage ../applications/networking/browsers/firefox-bin {
     channel = "devedition";
     generated = import ../applications/networking/browsers/firefox-bin/devedition_sources.nix;
-    gconf = pkgs.gnome2.GConf;
-    inherit (pkgs.gnome2) libgnome libgnomeui;
   };
 
   firefox-devedition-bin = res.wrapFirefox firefox-devedition-bin-unwrapped {
@@ -22480,7 +22485,6 @@ in
   thonny = callPackage ../applications/editors/thonny { };
 
   thunderbird = callPackage ../applications/networking/mailreaders/thunderbird {
-    inherit (gnome2) libIDL;
     inherit (rustPackages_1_42) rustc;
     libpng = libpng_apng;
     gtk3Support = true;
@@ -22488,10 +22492,7 @@ in
 
   thunderbolt = callPackage ../os-specific/linux/thunderbolt {};
 
-  thunderbird-bin = callPackage ../applications/networking/mailreaders/thunderbird-bin {
-    gconf = pkgs.gnome2.GConf;
-    inherit (pkgs.gnome2) libgnome libgnomeui;
-  };
+  thunderbird-bin = callPackage ../applications/networking/mailreaders/thunderbird-bin { };
 
   ticpp = callPackage ../development/libraries/ticpp { };
 
@@ -22825,6 +22826,8 @@ in
   vscode-extensions = recurseIntoAttrs (callPackage ../misc/vscode-extensions {});
 
   vscodium = callPackage ../applications/editors/vscode/vscodium.nix { };
+
+  code-server = callPackage ../servers/code-server { };
 
   vue = callPackage ../applications/misc/vue { };
 
@@ -26422,6 +26425,8 @@ in
   unityhub = callPackage ../development/tools/unityhub { };
 
   urbit = callPackage ../misc/urbit { };
+
+  utf8cpp = callPackage ../development/libraries/utf8cpp { };
 
   utf8proc = callPackage ../development/libraries/utf8proc { };
 
