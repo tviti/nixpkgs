@@ -589,6 +589,7 @@
   ./services/networking/autossh.nix
   ./services/networking/bird.nix
   ./services/networking/bitlbee.nix
+  ./services/networking/blockbook-frontend.nix
   ./services/networking/charybdis.nix
   ./services/networking/cjdns.nix
   ./services/networking/cntlm.nix
@@ -685,6 +686,7 @@
   ./services/networking/ocserv.nix
   ./services/networking/ofono.nix
   ./services/networking/oidentd.nix
+  ./services/networking/onedrive.nix
   ./services/networking/openfire.nix
   ./services/networking/openvpn.nix
   ./services/networking/ostinato.nix
@@ -831,6 +833,7 @@
   ./services/web-apps/atlassian/crowd.nix
   ./services/web-apps/atlassian/jira.nix
   ./services/web-apps/codimd.nix
+  ./services/web-apps/convos.nix
   ./services/web-apps/cryptpad.nix
   ./services/web-apps/documize.nix
   ./services/web-apps/dokuwiki.nix
