@@ -42,6 +42,7 @@ mapAliases ({
   aircrackng = aircrack-ng; # added 2016-01-14
   alienfx = throw "alienfx has been removed."; # added 2019-12-08
   ammonite-repl = ammonite; # added 2017-05-02
+  antimicro = throw "antimicro has been removed as it was broken, see antimicroX instead."; # added 2020-08-06
   arduino_core = arduino-core;  # added 2015-02-04
   asciidocFull = asciidoc-full;  # added 2014-06-22
   at_spi2_atk = at-spi2-atk; # added 2018-02-25
@@ -70,6 +71,7 @@ mapAliases ({
   catfish = xfce.catfish; # added 2019-12-22
   cgmanager = throw "cgmanager was deprecated by lxc and therefore removed from nixpkgs."; # added 2020-06-05
   checkbashism = checkbashisms; # added 2016-08-16
+  chronos = throw "chronos has been removed from nixpkgs, as it was unmaintained"; # added 2020-08-15
   cide = throw "deprecated in 2019-09-11: abandoned by upstream";
   cinepaint = throw "cinepaint has been removed from nixpkgs, as it was unmaintained"; # added 2019-12-10
   cifs_utils = cifs-utils; # added 2016-08
@@ -77,7 +79,6 @@ mapAliases ({
   clangAnalyzer = clang-analyzer;  # added 2015-02-20
   clawsMail = claws-mail; # added 2016-04-29
   clutter_gtk = clutter-gtk; # added 2018-02-25
-  conkerorWrapper = conkeror; # added 2015-01
   compton = picom; # added 2019-12-02
   compton-git = compton; # added 2019-05-20
   conntrack_tools = conntrack-tools; # added 2018-05
@@ -110,6 +111,7 @@ mapAliases ({
   docbook_xml_xslt = docbook_xsl; # added 2018-04-25
   double_conversion = double-conversion; # 2017-11-22
   docker_compose = docker-compose; # 2018-11-10
+  draftsight = throw "draftsight has been removed, no longer available as freeware"; # added 2020-08-14
   dwarf_fortress = dwarf-fortress; # added 2016-01-23
   emacsMelpa = emacs25Packages; # for backward compatibility
   emacsPackagesGen = emacsPackagesFor; # added 2018-08-18
@@ -128,17 +130,6 @@ mapAliases ({
   firefox-esr-wrapper = firefox-esr;  # 2016-01
   firefox-wrapper = firefox;          # 2016-01
   firefoxWrapper = firefox;           # 2015-09
-  firefox-esr-52           = firefoxPackages.firefox-esr-52; # 2020-02, remove after 20.03 branchoff
-  firefox-esr-52-unwrapped = firefoxPackages.firefox-esr-52; # 2020-02, remove after 20.03 branchoff
-  firefox-esr-60           = firefoxPackages.firefox-esr-60; # 2020-02, remove after 20.03 branchoff
-  firefox-esr-60-unwrapped = firefoxPackages.firefox-esr-60; # 2020-02, remove after 20.03 branchoff
-  icecat                   = firefoxPackages.icecat;         # 2020-02, remove after 20.03 branchoff
-  icecat-unwrapped         = firefoxPackages.icecat;         # 2020-02, remove after 20.03 branchoff
-  conkeror-unwrapped       = conkeror; # 2020-02, remove after 20.03 branchoff
-  conkeror                 = throw ''
-    Conkeror doesn't work with any secure firefox release.
-    Please move to some of the alternatives at http://conkeror.org/Alternatives
-  ''; # 2020-02, remove after 20.03 branchoff
 
   firestr = throw "firestr has been removed."; # added 2019-12-08
   flameGraph = flamegraph; # added 2018-04-25
@@ -148,6 +139,11 @@ mapAliases ({
   fontconfig-ultimate = throw ''
     fontconfig-ultimate has been removed. The repository has been archived upstream and activity has ceased for several years.
     https://github.com/bohoomil/fontconfig-ultimate/issues/171.
+  '';
+  # 2020-07-21
+  fontconfig_210 = throw ''
+    fontconfig 2.10.x hasn't had a release in years, is vulnerable to CVE-2016-5384
+    and has only been used for old fontconfig caches.
   '';
   font-droid = throw "font-droid has been deprecated by noto-fonts"; # 2019-04-12
   foomatic_filters = foomatic-filters;  # 2016-08
@@ -176,6 +172,7 @@ mapAliases ({
   gnuradio-rds = gr-rds; # added 2019-05-27
   gnuradio-osmosdr = gr-osmosdr; # added 2019-05-27
   gnustep-make = gnustep.make; # added 2016-7-6
+  gnupg20 = throw "gnupg20 has been removed from nixpkgs as upstream dropped support on 2017-12-31";# added 2020-07-12
   go_1_12 = throw "go_1_12 has been removed"; # added 2020-04-26
   go-pup = pup; # added 2017-12-19
   gobjectIntrospection = gobject-introspection; # added 2018-12-02
@@ -264,6 +261,7 @@ mapAliases ({
   libudev = udev; # added 2018-04-25
   libusb = libusb1; # added 2020-04-28
   libsexy = throw "libsexy has been removed from nixpkgs, as it's abandoned and no package needed it."; # 2019-12-10
+  libstdcxxHook = throw "libstdcxx hook has been removed because cc-wrapper is now directly aware of the c++ standard library intended to be used."; # 2020-06-22
   libqmatrixclient = throw "libqmatrixclient was renamed to libquotient"; # added 2020-04-09
   links = links2; # added 2016-01-31
   linux_rpi0 = linux_rpi1;
@@ -284,8 +282,10 @@ mapAliases ({
   m3d-linux = m33-linux; # added 2016-08-13
   man_db = man-db; # added 2016-05
   manpages = man-pages; # added 2015-12-06
+  marathon = throw "marathon has been removed from nixpkgs, as it's unmaintained"; # added 2020-08-15
   mariadb-client = hiPrio mariadb.client; #added 2019.07.28
   matcha = throw "matcha was renamed to matcha-gtk-theme"; # added 2020-05-09
+  mathics = throw "mathics has been removed from nixpkgs, as it's unmaintained"; # added 2020-08-15
   matrique = spectral; # added 2020-01-27
   mbedtls_1_3 = throw "mbedtls_1_3 is end of life, see https://tls.mbed.org/kb/how-to/upgrade-2.0"; # added 2019-12-08
   mess = mame; # added 2019-10-30
@@ -300,7 +300,9 @@ mapAliases ({
   # floating point textures patents are expired,
   # so package reduced to alias
   mesa_drivers = mesa.drivers;
+  mesos = throw "mesos has been removed from nixpkgs, as it's unmaintained"; # added 2020-08-15
   midoriWrapper = midori; # added 2015-01
+  mist = throw "mist has been removed as the upstream project has been abandoned, see https://github.com/ethereum/mist#mist-browser-deprecated"; # added 2020-08-15
   mlt-qt5 = libsForQt5.mlt;  # added 2015-12-19
   mobile_broadband_provider_info = mobile-broadband-provider-info; # added 2018-02-25
   moby = throw "moby has been removed, merged into linuxkit in 2018.  Use linuxkit instead.";
@@ -345,6 +347,7 @@ mapAliases ({
   otter-browser = throw "otter-browser has been removed from nixpkgs, as it was unmaintained"; # added 2020-02-02
   owncloudclient = owncloud-client;  # added 2016-08
   p11_kit = p11-kit; # added 2018-02-25
+  parity = openethereum; # added 2020-08-01
   parquet-cpp = arrow-cpp; # added 2018-09-08
   pass-otp = pass.withExtensions (ext: [ext.pass-otp]); # added 2018-05-04
   perlXMLParser = perlPackages.XMLParser; # added 2018-10-12
@@ -357,7 +360,6 @@ mapAliases ({
     with the following snippet:
     php74.override { embedSupport = true; apxs2Support = false; }
   ''; # added 2020-04-01
-  php72-embed = php-embed; # added 2020-04-01
   php73-embed = php-embed; # added 2020-04-01
   php74-embed = php-embed; # added 2020-04-01
 
@@ -368,7 +370,6 @@ mapAliases ({
   ''; # added 2020-04-01
   php74Packages-embed = phpPackages-embed;
   php73Packages-embed = phpPackages-embed;
-  php72Packages-embed = phpPackages-embed;
 
   php-unit = throw ''
     php*-unit has been dropped, you can build something similar with
@@ -382,7 +383,6 @@ mapAliases ({
       fpmSupport = false;
     }
   ''; # added 2020-04-01
-  php72-unit = php-unit; # added 2020-04-01
   php73-unit = php-unit; # added 2020-04-01
   php74-unit = php-unit; # added 2020-04-01
 
@@ -400,7 +400,6 @@ mapAliases ({
   ''; # added 2020-04-01
   php74Packages-unit = phpPackages-unit;
   php73Packages-unit = phpPackages-unit;
-  php72Packages-unit = phpPackages-unit;
 
   pidgin-with-plugins = pidgin; # added 2016-06
   pidginlatex = pidgin-latex; # added 2018-01-08
@@ -556,6 +555,7 @@ mapAliases ({
   surf-webkit2 = surf; # added 2017-04-02
   sup = throw "deprecated in 2019-09-10: abandoned by upstream";
   system_config_printer = system-config-printer;  # added 2016-01-03
+  systemd_with_lvm2 = throw "obsolete, enabled by default via the lvm module"; # added 2020-07-12
   systool = sysfsutils; # added 2018-04-25
   tahoelafs = tahoe-lafs; # added 2018-03-26
   tangogps = foxtrotgps; # added 2020-01-26
@@ -685,6 +685,10 @@ mapAliases ({
 
   # added 2019-09-06
   zeroc_ice = pkgs.zeroc-ice;
+
+  # added 2020-06-22
+  zeromq3 = throw "zeromq3 has been deprecated by zeromq4.";
+  jzmq = throw "jzmq has been removed from nixpkgs, as it was unmaintained";
 } // (with ocaml-ng; { # added 2016-09-14
   ocaml_4_00_1 = ocamlPackages_4_00_1.ocaml;
   ocaml_4_01_0 = ocamlPackages_4_01_0.ocaml;
@@ -703,23 +707,6 @@ mapAliases ({
   # added 2020-02-09
   dina-font-pcf = dina-font;
 
-    /* Cleanup before 20.09 */
-  llvm_4 = throw ''
-    The LLVM versions 3.5, 3.9 and 4.0 have been removed in NixOS 20.03
-    due to a lack of compatibility with glibc 2.30!
-  '';
-  llvm_39 = llvm_4;
-  llvm_35 = llvm_4;
-  lld_4 = llvm_4;
-
-  llvmPackages_4 = llvm_4;
-  llvmPackages_39 = llvm_4;
-  llvmPackages_35 = llvm_4;
-
-  clang_39 = llvm_4;
-  clang_35 = llvm_4;
-  clang_4 = llvm_4;
-
   # added 2019-04-13
   # *-polly pointed to llvmPackages_latest
   llvm-polly = throw "clang is now built with polly-plugin by default";
@@ -736,4 +723,8 @@ mapAliases ({
   sqldeveloper_18 = throw "sqldeveloper_18 is not maintained anymore!"; # added 2020-02-04
 
   gcc-snapshot = throw "Marked as broken for >2 years, additionally this 'snapshot' pointed to a fairly old one from gcc7.";
+
+  /* Cleanup before 21.03 */
+  riot-desktop = throw "riot-desktop is now element-desktop!";
+  riot-web = throw "riot-web is now element-web";
 })
