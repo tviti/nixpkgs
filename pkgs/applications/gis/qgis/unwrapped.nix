@@ -1,4 +1,4 @@
-{ mkDerivation, lib, fetchFromGitHub, cmake, ninja, flex, bison, proj, geos, xlibsWrapper, sqlite, gsl
+{ mkDerivation, lib, fetchFromGitHub, cmake, ninja, flex, bison, protobuf, proj, geos, xlibsWrapper, sqlite, gsl
 , qwt, fcgi, python3Packages, libspatialindex, libspatialite, postgresql
 , txt2tags, openssl, libzip, hdf5, netcdf, exiv2
 , qtbase, qt3d, qtwebkit, qtsensors, qca-qt5, qtkeychain, qscintilla, qtserialport, qtxmlpatterns
@@ -10,7 +10,7 @@ let
     [ qscintilla-qt5 gdal jinja2 numpy psycopg2
       chardet dateutil pyyaml pytz requests urllib3 pygments pyqt5 sip owslib six ];
 in mkDerivation rec {
-  version = "3.10.7";
+  version = "3.14.15";
   pname = "qgis";
   name = "${pname}-unwrapped-${version}";
 
@@ -18,7 +18,7 @@ in mkDerivation rec {
     owner = "qgis";
     repo = "QGIS";
     rev = "final-${lib.replaceStrings ["."] ["_"] version}";
-    sha256 = "0z593n5g3zwhlzhs0z7nlpblz6z2rl3y7y3j1wf1rdx76i8p3qgf";
+    sha256 = "03skj8dd5rqi5k22zi8bly1sbynywm2bv6184dhjvw4i2vv4p3rl";
   };
 
   passthru = {
@@ -26,7 +26,7 @@ in mkDerivation rec {
     inherit python3Packages;
   };
 
-  buildInputs = [ openssl proj geos xlibsWrapper sqlite gsl qwt exiv2
+  buildInputs = [ openssl protobuf proj geos xlibsWrapper sqlite gsl qwt exiv2
     fcgi libspatialindex libspatialite postgresql txt2tags libzip hdf5 netcdf
     qtbase qtwebkit qtsensors qca-qt5 qtkeychain qscintilla qtserialport qtxmlpatterns qt3d ] ++
     (lib.optional withGrass grass) ++ pythonBuildInputs;
@@ -41,7 +41,7 @@ in mkDerivation rec {
      substituteInPlace cmake/FindPyQt5.py \
        --replace 'sip_dir = cfg.default_sip_dir' 'sip_dir = "${python3Packages.pyqt5}/share/sip/PyQt5"'
    '';
-
+  
   cmakeFlags = [ "-DCMAKE_SKIP_BUILD_RPATH=OFF"
                  "-DPYQT5_SIP_DIR=${python3Packages.pyqt5}/share/sip/PyQt5"
                  "-DQSCI_SIP_DIR=${python3Packages.qscintilla-qt5}/share/sip/PyQt5"
