@@ -1,21 +1,12 @@
 # This module allows the test driver to connect to the virtual machine
 # via a root shell attached to port 514.
 
-{ config, lib, pkgs, ... }:
+{ options, config, lib, pkgs, ... }:
 
 with lib;
 with import ../../lib/qemu-flags.nix { inherit pkgs; };
 
 {
-
-  # This option is a dummy that if used in conjunction with
-  # modules/virtualisation/qemu-vm.nix gets merged with the same option defined
-  # there and only is declared here because some modules use
-  # test-instrumentation.nix but not qemu-vm.nix.
-  #
-  # One particular example are the boot tests where we want instrumentation
-  # within the images but not other stuff like setting up 9p filesystems.
-  options.virtualisation.qemu = { };
 
   config = {
 
@@ -83,14 +74,7 @@ with import ../../lib/qemu-flags.nix { inherit pkgs; };
         # OOM killer randomly get rid of processes, since this leads
         # to failures that are hard to diagnose.
         echo 2 > /proc/sys/vm/panic_on_oom
-
-        # Coverage data is written into /tmp/coverage-data.
-        mkdir -p /tmp/xchg/coverage-data
       '';
-
-    # If the kernel has been built with coverage instrumentation, make
-    # it available under /proc/gcov.
-    boot.kernelModules = [ "gcov-proc" ];
 
     # Panic if an error occurs in stage 1 (rather than waiting for
     # user intervention).
@@ -119,8 +103,6 @@ with import ../../lib/qemu-flags.nix { inherit pkgs; };
     # Prevent tests from accessing the Internet.
     networking.defaultGateway = mkOverride 150 "";
     networking.nameservers = mkOverride 150 [ ];
-
-    systemd.globalEnvironment.GCOV_PREFIX = "/tmp/xchg/coverage-data";
 
     system.requiredKernelConfig = with config.lib.kernelConfig; [
       (isYes "SERIAL_8250_CONSOLE")

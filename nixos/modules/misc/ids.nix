@@ -184,7 +184,7 @@ in
       consul = 145;
       mailpile = 146;
       redmine = 147;
-      seeks = 148;
+      #seeks = 148; # removed 2020-06-21
       prosody = 149;
       i2pd = 150;
       systemd-network = 152;
@@ -321,7 +321,7 @@ in
       monetdb = 290;
       restic = 291;
       openvpn = 292;
-      meguca = 293;
+      # meguca = 293; # removed 2020-08-21
       yarn = 294;
       hdfs = 295;
       mapred = 296;
@@ -497,7 +497,7 @@ in
       #consul = 145; # unused
       mailpile = 146;
       redmine = 147;
-      seeks = 148;
+      #seeks = 148; # removed 2020-06-21
       prosody = 149;
       i2pd = 150;
       systemd-network = 152;
@@ -622,7 +622,7 @@ in
       monetdb = 290;
       restic = 291;
       openvpn = 292;
-      meguca = 293;
+      # meguca = 293; # removed 2020-08-21
       yarn = 294;
       hdfs = 295;
       mapred = 296;

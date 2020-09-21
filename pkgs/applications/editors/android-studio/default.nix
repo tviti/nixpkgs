@@ -1,4 +1,4 @@
-{ callPackage, makeFontsConf, gnome2 }:
+{ callPackage, makeFontsConf, gnome2, buildFHSUserEnv }:
 
 let
   mkStudio = opts: callPackage (import ./common.nix opts) {
@@ -6,6 +6,7 @@ let
       fontDirectories = [];
     };
     inherit (gnome2) GConf gnome_vfs;
+    inherit buildFHSUserEnv;
   };
   stableVersion = {
     version = "4.0.1.0"; # "Android Studio 4.0.1"
@@ -13,14 +14,14 @@ let
     sha256Hash = "15vm7fvi8c286wx9f28z6ysvm8wqqda759qql0zy9simwx22gy7j";
   };
   betaVersion = {
-    version = "4.1.0.14"; # "Android Studio 4.1 Beta 4"
-    build = "201.6667167";
-    sha256Hash = "11lkwcbzdl86cyz4lci65cx9z5jjhrc4z40maqx2r5hw1xka9290";
+    version = "4.1.0.18"; # "Android Studio 4.1 RC 3"
+    build = "201.6823847";
+    sha256Hash = "sha256-qbxmR9g8DSKzcP09bJuc+am79BSXWG39UQxFEb1bZ88=";
   };
   latestVersion = { # canary & dev
-    version = "4.2.0.5"; # "Android Studio 4.2 Canary 5"
-    build = "201.6682321";
-    sha256Hash = "076q6d7kmi0wcsqak7n6ggp1qns4xj1134xcpdzb92qk3dmg3wrh";
+    version = "4.2.0.10"; # "Android Studio 4.2 Canary 10"
+    build = "202.6811877";
+    sha256Hash = "sha256-ZKfETCECIOq+q/5N+I13ceb5dqGMGTXMGrqSeTL9KCc=";
   };
 in {
   # Attributes are named by their corresponding release channels

@@ -2,13 +2,13 @@
 
 buildGoModule rec {
   pname = "kopia";
-  version = "0.6.0";
+  version = "0.6.4";
 
   src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = "v${version}";
-    sha256 = "0jxl2zq3s3czz52ndq7zbj8liij0519745pbcqaj42x851c1p6mj";
+    sha256 = "1mq3vx8vrvvh3jrdqhrkbnnfkjsjw5ipw15d0602i1x05fxah4v4";
   };
 
   vendorSha256 = "1npxr7gp59xv38zdx1diilfxij6lb0cmvsnzvjx6n8g0326gf2ii";
@@ -16,6 +16,12 @@ buildGoModule rec {
   doCheck = false;
 
   subPackages = [ "." ];
+
+  buildFlagsArray = ''
+    -ldflags=
+       -X github.com/kopia/kopia/repo.BuildVersion=${version}
+       -X github.com/kopia/kopia/repo.BuildInfo=${src.rev}
+  '';
 
   postConfigure = ''
     # make 'vendor' writable

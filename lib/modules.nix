@@ -115,8 +115,19 @@ rec {
 
       checkUnmatched =
         if config._module.check && config._module.freeformType == null && merged.unmatchedDefns != [] then
-          let inherit (head merged.unmatchedDefns) file prefix;
-          in throw "The option `${showOption prefix}' defined in `${file}' does not exist."
+          let
+            firstDef = head merged.unmatchedDefns;
+            baseMsg = "The option `${showOption (prefix ++ firstDef.prefix)}' defined in `${firstDef.file}' does not exist.";
+          in
+            if attrNames options == [ "_module" ]
+              then throw ''
+                ${baseMsg}
+
+                However there are no options defined in `${showOption prefix}'. Are you sure you've
+                declared your options properly? This can happen if you e.g. declared your options in `types.submodule'
+                under `config' rather than `options'.
+              ''
+            else throw baseMsg
         else null;
 
       result = builtins.seq checkUnmatched {
@@ -446,7 +457,11 @@ rec {
       # yield a value computed from the definitions
       value = if opt ? apply then opt.apply res.mergedValue else res.mergedValue;
 
-    in opt //
+      warnDeprecation =
+        if opt.type.deprecationMessage == null then id
+        else warn "The type `types.${opt.type.name}' of option `${showOption loc}' defined in ${showFiles opt.declarations} is deprecated. ${opt.type.deprecationMessage}";
+
+    in warnDeprecation opt //
       { value = builtins.addErrorContext "while evaluating the option `${showOption loc}':" value;
         inherit (res.defsFinal') highestPrio;
         definitions = map (def: def.value) res.defsFinal;
@@ -602,7 +617,6 @@ rec {
         if tp.name == "option set" || tp.name == "submodule" then
           throw "The option ${showOption loc} uses submodules without a wrapping type, in ${showFiles opt.declarations}."
         else if optionSetIn "attrsOf" then types.attrsOf (types.submodule options)
-        else if optionSetIn "loaOf"   then types.loaOf   (types.submodule options)
         else if optionSetIn "listOf"  then types.listOf  (types.submodule options)
         else if optionSetIn "nullOr"  then types.nullOr  (types.submodule options)
         else tp;
