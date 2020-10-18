@@ -1242,6 +1242,12 @@
     githubId = 32319131;
     name = "Brett L";
   };
+  buckley310 = {
+    email = "sean.bck@gmail.com";
+    github = "buckley310";
+    githubId = 2379774;
+    name = "Sean Buckley";
+  };
   buffet = {
     email = "niclas@countingsort.com";
     github = "buffet";
@@ -2389,6 +2395,12 @@
     githubId = 984691;
     name = "Evan Danaher";
   };
+  edcragg = {
+    email = "ed.cragg@eipi.xyz";
+    github = "nuxeh";
+    githubId = 1516017;
+    name = "Ed Cragg";
+  };
   edef = {
     email = "edef@edef.eu";
     github = "edef1c";
@@ -3312,6 +3324,12 @@
     github = "guillaumekoenig";
     githubId = 10654650;
     name = "Guillaume Koenig";
+  };
+  guserav = {
+    email = "guserav@users.noreply.github.com";
+    github = "guserav";
+    githubId = 28863828;
+    name = "guserav";
   };
   guyonvarch = {
     email = "joris@guyonvarch.me";
@@ -9749,5 +9767,11 @@
       longkeyid = "rsa4096/0x9D98CDACFF04FD78";
       fingerprint = "8597 4506 EC69 5392 0443  0805 9D98 CDAC FF04 FD78";
     }];
+  };
+  hloeffler = {
+    name = "Hauke Löffler";
+    email = "nix@hauke-loeffler.de";
+    github = "hloeffler";
+    githubId = 6627191;
   };
 }
