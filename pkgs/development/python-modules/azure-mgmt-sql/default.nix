@@ -10,12 +10,12 @@
 
 buildPythonPackage rec {
   pname = "azure-mgmt-sql";
-  version = "0.21.0";
+  version = "0.23.0";
 
   src = fetchPypi {
     inherit pname version;
     extension = "zip";
-    sha256 = "7bf7a41d2e42532a00b5f41d3fc0512244451a35f038ac0a25c96ef2c5c04300";
+    sha256 = "acf7d4c83fb43152a809e3894528e561e601be543250c2824cc615cc88a70855";
   };
 
   propagatedBuildInputs = [

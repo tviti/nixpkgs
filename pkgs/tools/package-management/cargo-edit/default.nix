@@ -1,6 +1,13 @@
-{ stdenv, lib, darwin
-, rustPlatform, fetchFromGitHub
-, openssl, pkg-config, libiconv }:
+{ stdenv
+, lib
+, rustPlatform
+, fetchFromGitHub
+, pkg-config
+, openssl
+, libiconv
+, Security
+, zlib
+}:
 
 rustPlatform.buildRustPackage rec {
   pname = "cargo-edit";
@@ -16,7 +23,11 @@ rustPlatform.buildRustPackage rec {
   cargoSha256 = "1h1sy54p7zxijydnhzvkxli90d72biv1inni17licb0vb9dihmnf";
 
   nativeBuildInputs = [ pkg-config ];
-  buildInputs = [ openssl ] ++ lib.optionals stdenv.isDarwin [ libiconv darwin.apple_sdk.frameworks.Security ];
+
+  buildInputs = [ openssl zlib ] ++ lib.optionals stdenv.isDarwin [
+    libiconv
+    Security
+  ];
 
   doCheck = false; # integration tests depend on changing cargo config
 

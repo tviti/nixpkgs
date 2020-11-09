@@ -184,6 +184,14 @@ in
 
   config = mkMerge [
     (mkIf cfg.enable {
+      # Seed our configuration into nixos-generate-config
+      system.nixos-generate-config.desktopConfiguration = ''
+        # Enable the Plasma 5 Desktop Environment.
+        services.xserver.enable = true;
+        services.xserver.displayManager.sddm.enable = true;
+        services.xserver.desktopManager.plasma5.enable = true;
+      '';
+
       services.xserver.desktopManager.session = singleton {
         name = "plasma5";
         bgSupport = true;
@@ -192,7 +200,7 @@ in
 
       security.wrappers = {
         kcheckpass.source = "${lib.getBin plasma5.kscreenlocker}/libexec/kcheckpass";
-        start_kdeinit.source = "${lib.getBin pkgs.kinit}/libexec/kf5/start_kdeinit";
+        start_kdeinit.source = "${lib.getBin pkgs.kdeFrameworks.kinit}/libexec/kf5/start_kdeinit";
         kwin_wayland = {
           source = "${lib.getBin plasma5.kwin}/bin/kwin_wayland";
           capabilities = "cap_sys_nice+ep";
