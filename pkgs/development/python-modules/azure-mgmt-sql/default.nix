@@ -10,12 +10,12 @@
 
 buildPythonPackage rec {
   pname = "azure-mgmt-sql";
-  version = "0.23.0";
+  version = "0.24.0";
 
   src = fetchPypi {
     inherit pname version;
     extension = "zip";
-    sha256 = "acf7d4c83fb43152a809e3894528e561e601be543250c2824cc615cc88a70855";
+    sha256 = "da391ed00d82cd8e20ca50affdc43b99fd9a7919b54a3a0d53c73cb41eea09d3";
   };
 
   propagatedBuildInputs = [
@@ -33,6 +33,6 @@ buildPythonPackage rec {
     description = "This is the Microsoft Azure SQL Management Client Library";
     homepage = "https://github.com/Azure/azure-sdk-for-python";
     license = licenses.mit;
-    maintainers = with maintainers; [ mwilsoninsight ];
+    maintainers = with maintainers; [ maxwilson ];
   };
 }

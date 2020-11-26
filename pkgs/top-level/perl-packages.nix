@@ -511,10 +511,10 @@ let
     buildInputs = [ DataDump FileWhich Readonly TestDifferences TestTrap ];
     preCheck = "rm t/30cluster.t"; # do not run failing tests
     postInstall = ''
-      mkdir -p $out/etc/bash_completion.d
+      mkdir -p $out/share/bash-completion/completions
       mv $out/bin/clusterssh_bash_completion.dist \
-         $out/etc/bash_completion.d/clusterssh_bash_completion
-      substituteInPlace $out/etc/bash_completion.d/clusterssh_bash_completion \
+         $out/share/bash-completion/completions/clusterssh_bash_completion
+      substituteInPlace $out/share/bash-completion/completions/clusterssh_bash_completion \
          --replace '/bin/true' '${pkgs.coreutils}/bin/true' \
          --replace 'grep' '${pkgs.gnugrep}/bin/grep' \
          --replace 'sed' '${pkgs.gnused}/bin/sed'
@@ -1756,6 +1756,21 @@ let
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
     buildInputs = [ TestWarn ];
+  };
+
+  CatalystAuthenticationStoreLDAP = buildPerlPackage {
+    pname = "Catalyst-Authentication-Store-LDAP";
+    version = "1.016";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/I/IL/ILMARI/Catalyst-Authentication-Store-LDAP-1.016.tar.gz";
+      sha256 = "0cm399vxqqf05cjgs1j5v3sk4qc6nmws5nfhf52qvpbwc4m82mq8";
+    };
+    propagatedBuildInputs = [ NetLDAP CatalystPluginAuthentication ClassAccessorFast ];
+    buildInputs = [ TestMore TestMockObject TestException NetLDAPServerTest ];
+    meta = {
+      description= "Authentication from an LDAP Directory";
+      license = with stdenv.lib.licenses; [ artistic1 ];
+    };
   };
 
   CatalystComponentInstancePerContext = buildPerlPackage {
@@ -8300,12 +8315,12 @@ let
     };
   };
 
-  FutureAsyncAwait = buildPerlModule {
+  FutureAsyncAwait = buildPerlModule rec {
     pname = "Future-AsyncAwait";
-    version = "0.45";
+    version = "0.46";
     src = fetchurl {
-      url = "mirror://cpan/authors/id/P/PE/PEVANS/Future-AsyncAwait-0.45.tar.gz";
-      sha256 = "1aq19b21r9i4c1mxkrv0irnx16234cnzsx50178c7xif4gqkar9k";
+      url = "mirror://cpan/authors/id/P/PE/PEVANS/Future-AsyncAwait-${version}.tar.gz";
+      sha256 = "1iqbs7n8923xjkai51hiczn5an8cskddl7qrfi30axjl1d56h6r0";
     };
     buildInputs = [ TestRefcount ];
     propagatedBuildInputs = [ Future XSParseSublike ];
@@ -14910,6 +14925,47 @@ let
     };
   };
 
+  NetLDAPServer = buildPerlPackage {
+    pname = "Net-LDAP-Server";
+    version = "0.43";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/A/AA/AAR/Net-LDAP-Server-0.43.tar.gz";
+      sha256 = "0qmh3cri3fpccmwz6bhwp78yskrb3qmalzvqn0a23hqbsfs4qv6x";
+    };
+    propagatedBuildInputs = [ NetLDAP ConvertASN1 ];
+    meta = {
+      description = "LDAP server side protocol handling";
+      license = with stdenv.lib.licenses; [ artistic1 ];
+    };
+  };
+
+  NetLDAPSID = buildPerlPackage {
+    pname = "Net-LDAP-SID";
+    version = "0.0001";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/K/KA/KARMAN/Net-LDAP-SID-0.001.tar.gz";
+      sha256 = "1mnnpkmj8kpb7qw50sm8h4sd8py37ssy2xi5hhxzr5whcx0cvhm8";
+    };
+    meta = {
+      description= "Active Directory Security Identifier manipulation";
+      license = with stdenv.lib.licenses; [ artistic2 ];
+    };
+  };
+
+  NetLDAPServerTest = buildPerlPackage {
+    pname = "Net-LDAP-Server-Test";
+    version = "0.22";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/K/KA/KARMAN/Net-LDAP-Server-Test-0.22.tar.gz";
+      sha256 = "13idip7jky92v4adw60jn2gcc3zf339gsdqlnc9nnvqzbxxp285i";
+    };
+    propagatedBuildInputs = [ NetLDAP NetLDAPServer TestMore DataDump NetLDAPSID ];
+    meta = {
+      description= "test Net::LDAP code";
+      license = with stdenv.lib.licenses; [ artistic1 ];
+    };
+  };
+
   NetNetmask = buildPerlPackage {
     pname = "Net-Netmask";
     version = "1.9104";
@@ -21155,6 +21211,21 @@ let
     };
   };
 
+  TextMultiMarkdown = buildPerlPackage {
+    pname = "Text-MultiMarkdown";
+    version = "1.000035";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/B/BO/BOBTFISH/Text-MultiMarkdown-1.000035.tar.gz";
+      sha256 = "2467dd13751dc2979d7c880b24e762952130fdf42a1ed3ee04fdf72d4b52646a";
+    };
+    buildInputs = [ ListMoreUtils TestException ];
+    propagatedBuildInputs = [ HTMLParser TextMarkdown ];
+    meta = {
+      description = "Convert MultiMarkdown syntax to (X)HTML";
+      license = stdenv.lib.licenses.bsd3;
+    };
+  };
+
   TestNumberDelta = buildPerlPackage {
     pname = "Test-Number-Delta";
     version = "1.06";
@@ -22401,6 +22472,21 @@ let
     propagatedBuildInputs = [ URI ];
     meta = {
       description = "Database of robots.txt-derived permissions";
+      license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
+  WWWTwilioAPI = buildPerlPackage {
+    pname = "WWW-Twilio-API";
+    version = "0.21";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/S/SC/SCOTTW/WWW-Twilio-API-0.21.tar.gz";
+      sha256 = "582db53a091f8da3670c037733314f2510af5e8ee0ba42a0e391e2f2e3ca7734";
+    };
+    prePatch = "rm examples.pl";
+    propagatedBuildInputs = [ LWPProtocolhttps ];
+    meta = {
+      description = "Accessing Twilio's REST API with Perl";
       license = with stdenv.lib.licenses; [ artistic1 gpl1Plus ];
     };
   };
