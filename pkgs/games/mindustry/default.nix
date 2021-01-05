@@ -2,10 +2,11 @@
 , makeWrapper
 , makeDesktopItem
 , fetchFromGitHub
-, gradle_5
+, gradleGen
+, jdk14
 , perl
 , jre
-, libpulseaudio
+, alsaLib
 
 # Make the build version easily overridable.
 # Server and client build versions must match, and an empty build version means
@@ -21,14 +22,14 @@ let
   # Note: when raising the version, ensure that all SNAPSHOT versions in
   # build.gradle are replaced by a fixed version
   # (the current one at the time of release) (see postPatch).
-  version = "104.6";
+  version = "122.1";
   buildVersion = makeBuildVersion version;
 
   src = fetchFromGitHub {
     owner = "Anuken";
     repo = "Mindustry";
     rev = "v${version}";
-    sha256 = "1crdfiymaz57gnma6bmdcsnbl635nhjdndrjv467c4xfq9vvap2i";
+    sha256 = "18m4s81cfb2cr2fj61nf6spiln7cbvx25g42w6fypfikflv3qd8y";
   };
 
   desktopItem = makeDesktopItem {
@@ -49,16 +50,26 @@ let
     sed -i 's/com.github.anuken:packr:-SNAPSHOT/com.github.anuken:packr:034efe51781d2d8faa90370492133241bfb0283c/' build.gradle
   '';
 
+  preBuild = ''
+    # Arc is run at build time for sprite packing, and it needs to see
+    # the runtime libraries
+    ${stdenv.lib.optionalString stdenv.isLinux "export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${alsaLib}/lib"}
+    export GRADLE_USER_HOME=$(mktemp -d)
+  '';
+
+  # The default one still uses jdk8 (#89731)
+  gradle_6 = (gradleGen.override (old: { java = jdk14; })).gradle_6_7;
+
   # fake build to pre-download deps into fixed-output derivation
   deps = stdenv.mkDerivation {
     pname = "${pname}-deps";
     inherit version src postPatch;
-    nativeBuildInputs = [ gradle_5 perl ];
+    nativeBuildInputs = [ gradle_6 perl ];
     # Here we build both the server and the client so we only have to specify
     # one hash for 'deps'. Deps can be garbage collected after the build,
     # so this is not really an issue.
     buildPhase = ''
-      export GRADLE_USER_HOME=$(mktemp -d)
+      ${preBuild}
       gradle --no-daemon desktop:dist -Pbuildversion=${buildVersion}
       gradle --no-daemon server:dist -Pbuildversion=${buildVersion}
     '';
@@ -70,7 +81,7 @@ let
     '';
     outputHashAlgo = "sha256";
     outputHashMode = "recursive";
-    outputHash = "08yrczz1qn78qy3x67gs7d0xvihbfbb8ggiczq2nj812745zcizw";
+    outputHash = "0vzck6hsrvs438s3ikk66qmpak88bmqcb8inqbbjwy7x87d2qsvj";
   };
 
   # Separate commands for building and installing the server and the client
@@ -84,7 +95,7 @@ let
     install -Dm644 desktop/build/libs/Mindustry.jar $out/share/mindustry.jar
     mkdir -p $out/bin
     makeWrapper ${jre}/bin/java $out/bin/mindustry \
-      --prefix LD_LIBRARY_PATH : ${libpulseaudio}/lib \
+      ${stdenv.lib.optionalString stdenv.isLinux "--prefix LD_LIBRARY_PATH : ${alsaLib}/lib"} \
       --add-flags "-jar $out/share/mindustry.jar"
     install -Dm644 core/assets/icons/icon_64.png $out/share/icons/hicolor/64x64/apps/mindustry.png
     install -Dm644 ${desktopItem}/share/applications/Mindustry.desktop $out/share/applications/Mindustry.desktop
@@ -102,10 +113,10 @@ assert stdenv.lib.assertMsg (enableClient || enableServer)
 stdenv.mkDerivation rec {
   inherit pname version src postPatch;
 
-  nativeBuildInputs = [ gradle_5 makeWrapper ];
+  nativeBuildInputs = [ gradle_6 makeWrapper ];
 
   buildPhase = with stdenv.lib; ''
-    export GRADLE_USER_HOME=$(mktemp -d)
+    ${preBuild}
     # point to offline repo
     sed -ie "s#mavenLocal()#mavenLocal(); maven { url '${deps}' }#g" build.gradle
     ${optionalString enableClient buildClient}
@@ -121,9 +132,15 @@ stdenv.mkDerivation rec {
     homepage = "https://mindustrygame.github.io/";
     downloadPage = "https://github.com/Anuken/Mindustry/releases";
     description = "A sandbox tower defense game";
-    license = licenses.gpl3;
+    license = licenses.gpl3Plus;
     maintainers = with maintainers; [ fgaz ];
     platforms = platforms.all;
+    # Hash mismatch on darwin:
+    # https://github.com/NixOS/nixpkgs/pull/105590#issuecomment-737120293
+    # Problems with native libraries in aarch64:
+    # https://github.com/NixOS/nixpkgs/pull/107646
+    # https://logs.nix.ci/?key=nixos/nixpkgs.107646&attempt_id=3032c060-72e9-4a76-8186-4739544397dd
+    broken = stdenv.isDarwin ||
+             stdenv.isAarch64;
   };
 }
-

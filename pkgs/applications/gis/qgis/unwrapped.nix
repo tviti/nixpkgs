@@ -3,6 +3,7 @@
 , txt2tags, openssl, libzip, hdf5, netcdf, exiv2
 , qtbase, qt3d, qtwebkit, qtsensors, qca-qt5, qtkeychain, qscintilla, qtserialport, qtxmlpatterns
 , withGrass ? true, grass
+, withWebKit ? true, qtwebkit
 }:
 with lib;
 let
@@ -51,9 +52,9 @@ in mkDerivation rec {
 
   meta = {
     description = "A Free and Open Source Geographic Information System";
-    homepage = "http://www.qgis.org";
+    homepage = "https://www.qgis.org";
     license = lib.licenses.gpl2Plus;
     platforms = with lib.platforms; linux;
-    maintainers = with lib.maintainers; [ lsix ];
+    maintainers = with lib.maintainers; [ lsix sikmir ];
   };
 }

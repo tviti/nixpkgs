@@ -21,18 +21,18 @@ let
   sources = name: system: {
     x86_64-darwin = {
       url = "${baseUrl}/${name}-darwin-x86_64.tar.gz";
-      sha256 = "1lkmilj873ia8kigyfmqfjnlpi7jzq3q4m0ip3lr0a111nr3wi4m";
+      sha256 = "1miqvh2b3mxrrr63q8f5i944mp3rz6685ckmnk5fml2wyc273jiv";
     };
 
     x86_64-linux = {
       url = "${baseUrl}/${name}-linux-x86_64.tar.gz";
-      sha256 = "0q20vaqr9rrzcp57jrskcmbdvqrfpr4lscki85824fdlpklc00ga";
+      sha256 = "15kfsxn6j37rsw97ixj7ixkzcby0pkgc5xj7cpqdq975ym58sgv7";
     };
   }.${system};
 
 in stdenv.mkDerivation rec {
   pname = "google-cloud-sdk";
-  version = "315.0.0";
+  version = "321.0.0";
 
   src = fetchurl (sources "${pname}-${version}" stdenv.hostPlatform.system);
 
@@ -99,7 +99,7 @@ in stdenv.mkDerivation rec {
     # This package contains vendored dependencies. All have free licenses.
     license = licenses.free;
     homepage = "https://cloud.google.com/sdk/";
-    maintainers = with maintainers; [ pradyuman stephenmw zimbatm ];
+    maintainers = with maintainers; [ iammrinal0 pradyuman stephenmw zimbatm ];
     platforms = [ "x86_64-linux" "x86_64-darwin" ];
   };
 }

@@ -52,6 +52,7 @@ stdenv.mkDerivation rec {
     "--with-gs=${ghostscript}/bin/gs"
   ] ++ stdenv.lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
     "ac_cv_path_PERL=${buildPackages.perl}/bin/perl"
+    "gl_cv_func_signbit=yes"
   ];
 
   makeFlags = stdenv.lib.optionals (stdenv.buildPlatform != stdenv.hostPlatform) [
@@ -82,10 +83,6 @@ stdenv.mkDerivation rec {
     moveToOutput bin/afmtodit $perl
     moveToOutput bin/gperl $perl
     moveToOutput bin/chem $perl
-    moveToOutput share/groff/${version}/font/devpdf $perl
-
-    # idk if this is needed, but Fedora does it
-    moveToOutput share/groff/${version}/tmac/pdf.tmac $perl
 
     moveToOutput bin/gpinyin $perl
     moveToOutput lib/groff/gpinyin $perl

@@ -1,4 +1,4 @@
-{ stdenv, buildPythonPackage, fetchPypi, substituteAll
+{ stdenv, buildPythonPackage, fetchPypi, substituteAll, pythonOlder
 , geos, pytest, cython
 , numpy
 }:
@@ -11,6 +11,7 @@ buildPythonPackage rec {
     inherit pname version;
     sha256 = "0adiz4jwmwxk7k1awqifb1a9bj5x4nx4gglb5dz9liam21674h8n";
   };
+  disabled = pythonOlder "3.5";
 
   nativeBuildInputs = [
     geos # for geos-config
@@ -28,8 +29,7 @@ buildPythonPackage rec {
     (substituteAll {
       src = ./library-paths.patch;
       libgeos_c = GEOS_LIBRARY_PATH;
-      libc = "${stdenv.cc.libc}/lib/libc${stdenv.hostPlatform.extensions.sharedLibrary}"
-               + stdenv.lib.optionalString (!stdenv.isDarwin) ".6";
+      libc = stdenv.lib.optionalString (!stdenv.isDarwin) "${stdenv.cc.libc}/lib/libc${stdenv.hostPlatform.extensions.sharedLibrary}.6";
     })
   ];
 

@@ -1,4 +1,4 @@
-{ stdenv, buildGoPackage, fetchFromGitHub, groff, installShellFiles, utillinux }:
+{ stdenv, buildGoPackage, fetchFromGitHub, git, groff, installShellFiles, util-linux, nixosTests }:
 
 buildGoPackage rec {
   pname = "hub";
@@ -16,10 +16,12 @@ buildGoPackage rec {
     sha256 = "1qjab3dpia1jdlszz3xxix76lqrm4zbmqzd9ymld7h06awzsg2vh";
   };
 
-  nativeBuildInputs = [ groff installShellFiles utillinux ];
+  nativeBuildInputs = [ groff installShellFiles util-linux ];
 
   postPatch = ''
     patchShebangs .
+    substituteInPlace git/git.go --replace "cmd.New(\"git\")" "cmd.New(\"${git}/bin/git\")"
+    substituteInPlace commands/args.go --replace "Executable:  \"git\"" "Executable:  \"${git}/bin/git\""
   '';
 
   postInstall = ''
@@ -32,6 +34,8 @@ buildGoPackage rec {
     make man-pages
     installManPage share/man/man[1-9]/*.[1-9]
   '';
+
+  passthru.tests = { inherit (nixosTests) hub; };
 
   meta = with stdenv.lib; {
     description = "Command-line wrapper for git that makes you better at GitHub";

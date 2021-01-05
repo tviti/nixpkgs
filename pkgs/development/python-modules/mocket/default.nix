@@ -9,11 +9,11 @@
 
 buildPythonPackage rec {
   pname = "mocket";
-  version = "3.9.3";
+  version = "3.9.35";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "15npwf0f8g5vmwpmyvmsyi4p9ia1w95z8jips0nkfs978pnjy69g";
+    sha256 = "d822a2adfd8e028a2856785fbfe78e7dd8c7a3b623516298aef6d42a4c9149d1";
   };
 
   patchPhase = ''

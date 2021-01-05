@@ -394,9 +394,9 @@ let
           ${optionalString cfg.requireWheel
               "auth required pam_wheel.so use_uid"}
           ${optionalString cfg.logFailures
-              "auth required pam_tally.so"}
+              "auth required pam_faillock.so"}
           ${optionalString (config.security.pam.enableSSHAgentAuth && cfg.sshAgentAuth)
-              "auth sufficient ${pkgs.pam_ssh_agent_auth}/libexec/pam_ssh_agent_auth.so file=~/.ssh/authorized_keys:~/.ssh/authorized_keys2:/etc/ssh/authorized_keys.d/%u"}
+              "auth sufficient ${pkgs.pam_ssh_agent_auth}/libexec/pam_ssh_agent_auth.so file=${lib.concatStringsSep ":" config.services.openssh.authorizedKeysFiles}"}
           ${optionalString cfg.fprintAuth
               "auth sufficient ${pkgs.fprintd}/lib/security/pam_fprintd.so"}
           ${let p11 = config.security.pam.p11; in optionalString cfg.p11Auth

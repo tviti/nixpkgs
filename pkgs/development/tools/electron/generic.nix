@@ -13,6 +13,7 @@
 , libdrm
 , mesa
 , libxkbcommon
+, libappindicator-gtk3
 }:
 
 version: hashes:
@@ -33,6 +34,11 @@ let
     sha256 = hash;
   };
 
+  headersFetcher = vers: hash: fetchurl {
+    url = "https://atom.io/download/electron/v${vers}/node-v${vers}-headers.tar.gz";
+    sha256 = hash;
+  };
+
   tags = {
     i686-linux = "linux-ia32";
     x86_64-linux = "linux-x64";
@@ -47,10 +53,11 @@ let
   common = platform: {
     inherit name version meta;
     src = fetcher version (get tags platform) (get hashes platform);
+    passthru.headers = headersFetcher version hashes.headers;
   };
 
   electronLibPath = with stdenv.lib; makeLibraryPath (
-    [ libuuid at-spi2-atk at-spi2-core ]
+    [ libuuid at-spi2-atk at-spi2-core libappindicator-gtk3 ]
     ++ optionals (! versionOlder version "9.0.0") [ libdrm mesa ]
     ++ optionals (! versionOlder version "11.0.0") [ libxkbcommon ]
   );

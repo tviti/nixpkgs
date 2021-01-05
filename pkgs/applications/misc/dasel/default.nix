@@ -5,16 +5,31 @@
 
 buildGoModule rec {
   pname = "dasel";
-  version = "1.6.2";
+  version = "1.12.0";
 
   src = fetchFromGitHub {
     owner = "TomWright";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-LGrFs9JNb0gjXg6IRkUfUOWS+sr1nukzOEWK4XUfkfw=";
+    sha256 = "69igz0Q7pT0f6PsbZWHcwUiTKRTTzj7r5E6E5ExUoJo=";
   };
 
-  vendorSha256 = "1552k85z4s6gv7sss7dccv3h8x22j2sr12icp6s7s0a3i4iwyksw";
+  vendorSha256 = "BdX4DO77mIf/+aBdkNVFUzClsIml1UMcgvikDbbdgcY=";
+
+  buildFlagsArray = ''
+    -ldflags=-s -w -X github.com/tomwright/dasel/internal.Version=${version}
+  '';
+
+  doInstallCheck = true;
+  installCheckPhase = ''
+    if [[ "$("$out/bin/${pname}" --version)" == "${pname} version ${version}" ]]; then
+      echo "" | $out/bin/dasel put object -p yaml -t string -t int "my.favourites" colour=red number=3 | grep -q red
+      echo '${pname} smoke check passed'
+    else
+      echo '${pname} smoke check failed'
+      return 1
+    fi
+  '';
 
   meta = with stdenv.lib; {
     description = "Query and update data structures from the command line";

@@ -3,23 +3,20 @@
 , cmake
 }:
 
-let
-  boostWithPython3 = boost.override { python = python3; enablePython = true; };
-in
 stdenv.mkDerivation rec {
   pname = "trellis";
-  version = "2020.11.07";
+  version = "2021.01.02";
 
   # git describe --tags
   realVersion = with stdenv.lib; with builtins;
-    "1.0-469-g${substring 0 7 (elemAt srcs 0).rev}";
+    "1.0-482-g${substring 0 7 (elemAt srcs 0).rev}";
 
   srcs = [
     (fetchFromGitHub {
        owner  = "SymbiFlow";
        repo   = "prjtrellis";
-       rev    = "b013a135a9b95c18ece559e19aa73ad6c84446c9";
-       sha256 = "09bx30jm9bgdxmbxf49a27spg4yd1nk5r5mympq7xi28hq1xwjnf";
+       rev    = "60c05b3f4e71fd78d4fba5c31f9974694245199e";
+       sha256 = "1k37mxwxv9fpm6xnrxlqqap7zqh2dvgqncphj3asi2rz0kh07ppf";
        name   = "trellis";
      })
 
@@ -33,7 +30,7 @@ stdenv.mkDerivation rec {
   ];
   sourceRoot = "trellis";
 
-  buildInputs = [ boostWithPython3 ];
+  buildInputs = [ boost ];
   nativeBuildInputs = [ cmake python3 ];
   cmakeFlags = [
     "-DCURRENT_GIT_VERSION=${realVersion}"

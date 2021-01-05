@@ -1,10 +1,8 @@
 { stdenv, fetchFromGitLab, cmake, gfortran, perl
-, openblas, blas, lapack, hdf5-cpp, python3, texlive
+, openblas, hdf5-cpp, python3, texlive
 , armadillo, openmpi, globalarrays, openssh
 , makeWrapper, fetchpatch
 } :
-
-assert blas.implementation == "openblas" && lapack.implementation == "openblas";
 
 let
   version = "20.10";
@@ -20,7 +18,7 @@ in stdenv.mkDerivation {
     owner = "Molcas";
     repo = "OpenMolcas";
     rev = gitLabRev;
-    sha256 = "1w8av44dx5r9yp2xhf9ypdrhappvk984wrd5pa1ww0qv6j2446ic";
+    sha256 = "0xr9plgb0cfmxxqmd3wrhvl0hv2jqqfqzxwzs1jysq2m9cxl314v";
   };
 
   patches = [
@@ -74,7 +72,7 @@ in stdenv.mkDerivation {
     homepage = "https://gitlab.com/Molcas/OpenMolcas";
     maintainers = [ maintainers.markuskowa ];
     license = licenses.lgpl21;
-    platforms = platforms.linux;
+    platforms = [ "x86_64-linux" ];
   };
 }
 

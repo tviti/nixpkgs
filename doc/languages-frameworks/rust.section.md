@@ -1,10 +1,4 @@
----
-title: Rust
-author: Matthias Beyer
-date: 2017-03-05
----
-
-# Rust
+# Rust {#rust}
 
 To install the rust compiler and cargo put
 
@@ -27,16 +21,16 @@ Rust applications are packaged by using the `buildRustPackage` helper from `rust
 ```
 rustPlatform.buildRustPackage rec {
   pname = "ripgrep";
-  version = "11.0.2";
+  version = "12.1.1";
 
   src = fetchFromGitHub {
     owner = "BurntSushi";
     repo = pname;
     rev = version;
-    sha256 = "1iga3320mgi7m853la55xip514a3chqsdi1a1rwv25lr9b1p7vd3";
+    sha256 = "1hqps7l5qrjh9f914r5i6kmcz6f1yb951nv4lby0cjnp5l253kps";
   };
 
-  cargoSha256 = "17ldqr3asrdcsh4l29m3b5r37r5d0b3npq1lrgjmxb6vlx6a36qh";
+  cargoSha256 = "03wf9r2csi6jpa7v5sw5lpxkrk4wfzwmzx7k3991q3bdjzcwnnwp";
 
   meta = with stdenv.lib; {
     description = "A fast line-oriented regex search tool, similar to ag and ack";
@@ -47,10 +41,31 @@ rustPlatform.buildRustPackage rec {
 }
 ```
 
-`buildRustPackage` requires a `cargoSha256` attribute which is computed over
-all crate sources of this package. Currently it is obtained by inserting a
-fake checksum into the expression and building the package once. The correct
-checksum can then be taken from the failed build.
+`buildRustPackage` requires either the `cargoSha256` or the
+`cargoHash` attribute which is computed over all crate sources of this
+package. `cargoHash256` is used for traditional Nix SHA-256 hashes,
+such as the one in the example above. `cargoHash` should instead be
+used for [SRI](https://www.w3.org/TR/SRI/) hashes. For example:
+
+```
+  cargoHash = "sha256-l1vL2ZdtDRxSGvP0X/l3nMw8+6WF67KPutJEzUROjg8=";
+```
+
+Both types of hashes are permitted when contributing to nixpkgs. The
+Cargo hash is obtained by inserting a fake checksum into the
+expression and building the package once. The correct checksum can
+then be taken from the failed build. A fake hash can be used for
+`cargoSha256` as follows:
+
+```
+  cargoSha256 = stdenv.lib.fakeSha256;
+```
+
+For `cargoHash` you can use:
+
+```
+  cargoHash = stdenv.lib.fakeHash;
+```
 
 Per the instructions in the [Cargo Book](https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html)
 best practices guide, Rust applications should always commit the `Cargo.lock`
@@ -63,9 +78,52 @@ The fetcher will verify that the `Cargo.lock` file is in sync with the `src`
 attribute, and fail the build if not. It will also will compress the vendor
 directory into a tar.gz archive.
 
-### Building a crate for a different target
+### Cross compilation
 
-To build your crate with a different cargo `--target` simply specify the `target` attribute:
+By default, Rust packages are compiled for the host platform, just like any
+other package is.  The `--target` passed to rust tools is computed from this.
+By default, it takes the `stdenv.hostPlatform.config` and replaces components
+where they are known to differ. But there are ways to customize the argument:
+
+ - To choose a different target by name, define
+   `stdenv.hostPlatform.rustc.config` as that name (a string), and that
+   name will be used instead.
+
+   For example:
+   ```nix
+   import <nixpkgs> {
+     crossSystem = (import <nixpkgs/lib>).systems.examples.armhf-embedded // {
+       rustc.config = "thumbv7em-none-eabi";
+     };
+   }
+   ```
+   will result in:
+   ```shell
+   --target thumbv7em-none-eabi
+   ```
+
+ - To pass a completely custom target, define
+   `stdenv.hostPlatform.rustc.config` with its name, and
+   `stdenv.hostPlatform.rustc.platform` with the value.  The value will be
+   serialized to JSON in a file called
+   `${stdenv.hostPlatform.rustc.config}.json`, and the path of that file
+   will be used instead.
+
+   For example:
+   ```nix
+   import <nixpkgs> {
+     crossSystem = (import <nixpkgs/lib>).systems.examples.armhf-embedded // {
+       rustc.config = "thumb-crazy";
+       rustc.platform = { foo = ""; bar = ""; };
+     };
+   }
+   will result in:
+   ```shell
+   --target /nix/store/asdfasdfsadf-thumb-crazy.json # contains {"foo":"","bar":""}
+   ```
+
+Finally, as an ad-hoc escape hatch, a computed target (string or JSON file
+path) can be passed directly to `buildRustPackage`:
 
 ```nix
 pkgs.rustPlatform.buildRustPackage {
@@ -73,6 +131,15 @@ pkgs.rustPlatform.buildRustPackage {
   target = "x86_64-fortanix-unknown-sgx";
 }
 ```
+
+This is useful to avoid rebuilding Rust tools, since they are actually target
+agnostic and don't need to be rebuilt. But in the future, we should always
+build the Rust tools and standard library crates separately so there is no
+reason not to take the `stdenv.hostPlatform.rustc`-modifying approach, and the
+ad-hoc escape hatch to `buildRustPackage` can be removed.
+
+Note that currently custom targets aren't compiled with `std`, so `cargo test`
+will fail. This can be ignored by adding `doCheck = false;` to your derivation.
 
 ### Running package tests
 
@@ -524,12 +591,13 @@ For example, you might want to add `latest.rustChannels.stable.rust` to the list
 
 Imperatively, the latest stable version can be installed with the following command:
 
-    $ nix-env -Ai nixos.latest.rustChannels.stable.rust
+    $ nix-env -Ai nixpkgs.latest.rustChannels.stable.rust
 
 Or using the attribute with nix-shell:
 
-    $ nix-shell -p nixos.latest.rustChannels.stable.rust
+    $ nix-shell -p nixpkgs.latest.rustChannels.stable.rust
 
+Substitute the `nixpkgs` prefix with `nixos` on NixOS.
 To install the beta or nightly channel, "stable" should be substituted by
 "nightly" or "beta", or
 use the function provided by this overlay to pull a version based on a

@@ -113,6 +113,13 @@ let
             sed -i "$mf" -e 's|/usr/bin/||g ; s|/bin/||g ; s|/sbin/||g'
         done
         sed -i Makefile -e 's|= depmod|= ${buildPackages.kmod}/bin/depmod|'
+
+        # Don't include a (random) NT_GNU_BUILD_ID, to make the build more deterministic.
+        # This way kernels can be bit-by-bit reproducible depending on settings
+        # (e.g. MODULE_SIG and SECURITY_LOCKDOWN_LSM need to be disabled).
+        # See also https://kernelnewbies.org/BuildId
+        sed -i Makefile -e 's|--build-id|--build-id=none|'
+
         sed -i scripts/ld-version.sh -e "s|/usr/bin/awk|${buildPackages.gawk}/bin/awk|"
       '';
 
@@ -302,7 +309,7 @@ stdenv.mkDerivation ((drvAttrs config stdenv.hostPlatform.platform kernelPatches
   nativeBuildInputs = [ perl bc nettools openssl rsync gmp libmpc mpfr ]
       ++ optional  (stdenv.hostPlatform.platform.kernelTarget == "uImage") buildPackages.ubootTools
       ++ optional  (stdenv.lib.versionAtLeast version "4.14" && stdenv.lib.versionOlder version "5.8") libelf
-      # Removed utillinuxMinimal since it should not be a dependency.
+      # Removed util-linuxMinimal since it should not be a dependency.
       ++ optionals (stdenv.lib.versionAtLeast version "4.16") [ bison flex ]
       ++ optional  (stdenv.lib.versionAtLeast version "5.2")  cpio
       ++ optional  (stdenv.lib.versionAtLeast version "5.8")  elfutils

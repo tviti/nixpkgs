@@ -1,4 +1,4 @@
-{ config, stdenv, lib, callPackage, fetchurl, nss_3_44 }:
+{ stdenv, lib, callPackage, fetchurl, fetchpatch }:
 
 let
   common = opts: callPackage (import ./common.nix opts) {};
@@ -7,20 +7,16 @@ in
 rec {
   firefox = common rec {
     pname = "firefox";
-    ffversion = "83.0";
+    ffversion = "84.0.1";
     src = fetchurl {
       url = "mirror://mozilla/firefox/releases/${ffversion}/source/firefox-${ffversion}.source.tar.xz";
-      sha512 = "3va5a9471677jfzkhqp8xkba45n0bcpphbabhqbcbnps6p85m3y98pl5jy9q7cpq3a6gxc4ax7bp90yz2nfvfq7i64iz397xpprri2a";
+      sha512 = "0sl93h7pjiznabv6865pdbal08nlqncnv3g40l02mgwbphjh5iqrr1bz14khaf58h4v1la090cj7z0gmd0c10xfrx6z7wngm152zz75";
     };
-
-    patches = [
-      ./no-buildconfig-ffx76.patch
-    ];
 
     meta = {
       description = "A web browser built from Firefox source tree";
       homepage = "http://www.mozilla.com/en-US/firefox/";
-      maintainers = with lib.maintainers; [ eelco andir ];
+      maintainers = with lib.maintainers; [ eelco ];
       platforms = lib.platforms.unix;
       badPlatforms = lib.platforms.darwin;
       broken = stdenv.buildPlatform.is32bit; # since Firefox 60, build on 32-bit platforms fails with "out of memory".
@@ -41,14 +37,10 @@ rec {
       sha512 = "20h53cn7p4dds1yfm166iwbjdmw4fkv5pfk4z0pni6x8ddjvg19imzs6ggmpnfhaji8mnlknm7xp5j7x9vi24awvdxdds5n88rh25hd";
     };
 
-    patches = [
-      ./no-buildconfig-ffx76.patch
-    ];
-
     meta = {
       description = "A web browser built from Firefox Extended Support Release source tree";
       homepage = "http://www.mozilla.com/en-US/firefox/";
-      maintainers = with lib.maintainers; [ eelco andir ];
+      maintainers = with lib.maintainers; [ eelco ];
       platforms = lib.platforms.unix;
       badPlatforms = lib.platforms.darwin;
       broken = stdenv.buildPlatform.is32bit; # since Firefox 60, build on 32-bit platforms fails with "out of memory".

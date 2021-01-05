@@ -38,6 +38,9 @@ with pkgs;
 
   cross = callPackage ./cross {};
 
+  rustCustomSysroot = callPackage ./rust-sysroot {};
+  buildRustCrate = callPackage ../build-support/rust/build-rust-crate/test { };
+
   nixos-functions = callPackage ./nixos-functions {};
 
   patch-shebangs = callPackage ./patch-shebangs {};

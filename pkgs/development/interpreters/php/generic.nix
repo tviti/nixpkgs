@@ -13,6 +13,7 @@ let
     , version
     , sha256
     , extraPatches ? []
+    , packageOverrides ? (final: prev: {})
 
     # Sapi flags
     , cgiSupport ? true
@@ -49,8 +50,8 @@ let
               php = generic filteredArgs;
 
               php-packages = (callPackage ../../../top-level/php-packages.nix {
-                php = phpWithExtensions;
-              });
+                phpPackage = phpWithExtensions;
+              }).overrideScope' packageOverrides;
 
               allExtensionFunctions = prevExtensionFunctions ++ [ extensions ];
               enabledExtensions =
@@ -112,7 +113,8 @@ let
                   phpIni = "${phpWithExtensions}/lib/php.ini";
                   unwrapped = php;
                   tests = nixosTests.php;
-                  inherit (php-packages) packages extensions buildPecl;
+                  inherit (php-packages) extensions buildPecl;
+                  packages = php-packages.tools;
                   meta = php.meta // {
                     outputsToInstall = [ "out" ];
                   };
@@ -198,7 +200,8 @@ let
             ++ lib.optional (!ipv6Support) "--disable-ipv6"
             ++ lib.optional systemdSupport "--with-fpm-systemd"
             ++ lib.optional valgrindSupport "--with-valgrind=${valgrind.dev}"
-            ++ lib.optional ztsSupport "--enable-maintainer-zts"
+            ++ lib.optional (ztsSupport && (lib.versionOlder version "8.0")) "--enable-maintainer-zts"
+            ++ lib.optional (ztsSupport && (lib.versionAtLeast version "8.0")) "--enable-zts"
 
 
             # Sendmail

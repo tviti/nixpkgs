@@ -59,6 +59,10 @@ let
       buildInputs = [ pkgs.phantomjs2 ];
     };
 
+    flood = super.flood.override {
+      buildInputs = [ self.node-pre-gyp ];
+    };
+
     expo-cli = super."expo-cli".override (attrs: {
       # The traveling-fastlane-darwin optional dependency aborts build on Linux.
       dependencies = builtins.filter (d: d.packageName != "@expo/traveling-fastlane-${if stdenv.isLinux then "darwin" else "linux"}") attrs.dependencies;
@@ -72,6 +76,13 @@ let
     hsd = super.hsd.override {
       buildInputs = [ self.node-gyp-build pkgs.unbound ];
     };
+
+    ijavascript = super.ijavascript.override (oldAttrs: {
+      preRebuild = ''
+        export NPM_CONFIG_ZMQ_EXTERNAL=true
+      '';
+      buildInputs = oldAttrs.buildInputs ++ [ self.node-gyp-build pkgs.zeromq ];
+    });
 
     insect = super.insect.override (drv: {
       nativeBuildInputs = drv.nativeBuildInputs or [] ++ [ pkgs.psc-package self.pulp ];
@@ -185,6 +196,10 @@ let
       meta.broken = since "10";
     };
 
+    stf = super.stf.override {
+      meta.broken = since "10";
+    };
+
     tedicross = super."tedicross-git+https://github.com/TediCross/TediCross.git#v0.8.7".override {
       nativeBuildInputs = [ pkgs.makeWrapper ];
       postInstall = ''
@@ -201,8 +216,12 @@ let
       '';
     });
 
-    stf = super.stf.override {
-      meta.broken = since "10";
+    typescript-language-server = super.typescript-language-server.override {
+      nativeBuildInputs = [ pkgs.makeWrapper ];
+      postInstall = ''
+        wrapProgram "$out/bin/typescript-language-server" \
+          --prefix PATH : ${stdenv.lib.makeBinPath [ self.typescript ]}
+      '';
     };
 
     vega-cli = super.vega-cli.override {
