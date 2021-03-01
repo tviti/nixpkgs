@@ -1,11 +1,10 @@
-{ stdenv
+{ lib, stdenv
 , buildPythonPackage
 , fetchurl
 , isPy37
 , isPy38
 , isPy39
 , python
-, nvidia_x11
 , addOpenGLRunpath
 , future
 , numpy
@@ -52,7 +51,7 @@ in buildPythonPackage {
   '';
 
   postFixup = let
-    rpath = stdenv.lib.makeLibraryPath [ stdenv.cc.cc.lib nvidia_x11 ];
+    rpath = lib.makeLibraryPath [ stdenv.cc.cc.lib ];
   in ''
     find $out/${python.sitePackages}/torch/lib -type f \( -name '*.so' -or -name '*.so.*' \) | while read lib; do
       echo "setting rpath for $lib..."
@@ -63,7 +62,7 @@ in buildPythonPackage {
 
   pythonImportsCheck = [ "torch" ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Open source, prototype-to-production deep learning platform";
     homepage = "https://pytorch.org/";
     license = licenses.unfree; # Includes CUDA and Intel MKL.

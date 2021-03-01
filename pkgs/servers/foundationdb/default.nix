@@ -1,4 +1,4 @@
-{ gcc6Stdenv, stdenv, gccStdenv, llvmPackages
+{ gcc6Stdenv, gccStdenv, llvmPackages
 , lib, fetchurl, fetchpatch, fetchFromGitHub
 
 , cmake, ninja, which, findutils, m4, gawk
@@ -69,6 +69,7 @@ in with builtins; {
 
     patches = [
       ./patches/ldflags-6.0.patch
+      ./patches/include-fixes-6.0.patch
     ];
   };
 

@@ -2,7 +2,7 @@
 , mkDerivation
 , fetchFromGitHub
 , cmake
-, pkgconfig
+, pkg-config
 , lxqt-build-tools
 , qtbase
 , qttools
@@ -29,7 +29,7 @@ mkDerivation rec {
 
   nativeBuildInputs = [
     cmake
-    pkgconfig
+    pkg-config
     lxqt-build-tools
   ];
 
@@ -48,9 +48,9 @@ mkDerivation rec {
   passthru.updateScript = lxqtUpdateScript { inherit pname version src; };
 
   meta = with lib; {
-    description = "The LXQt PolicyKit agent";
     homepage = "https://github.com/lxqt/lxqt-policykit";
-    license = licenses.lgpl21;
+    description = "The LXQt PolicyKit agent";
+    license = licenses.lgpl21Plus;
     platforms = platforms.linux;
     maintainers = with maintainers; [ romildo ];
   };

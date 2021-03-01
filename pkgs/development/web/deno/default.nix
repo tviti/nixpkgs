@@ -1,4 +1,4 @@
-{ stdenv
+{ lib, stdenv
 , fetchurl
 , fetchFromGitHub
 , rust
@@ -32,7 +32,7 @@ rustPlatform.buildRustPackage rec {
   # Install completions post-install
   nativeBuildInputs = [ installShellFiles ];
 
-  buildInputs = stdenv.lib.optionals stdenv.isDarwin [ Security CoreServices ];
+  buildInputs = lib.optionals stdenv.isDarwin [ Security CoreServices ];
 
   # The rusty_v8 package will try to download a `librusty_v8.a` release at build time to our read-only filesystem
   # To avoid this we pre-download the file and place it in the locations it will require it in advance
@@ -64,7 +64,7 @@ rustPlatform.buildRustPackage rec {
 
   passthru.updateScript = ./update/update.ts;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "https://deno.land/";
     changelog = "${src.meta.homepage}/releases/tag/v${version}";
     description = "A secure runtime for JavaScript and TypeScript";

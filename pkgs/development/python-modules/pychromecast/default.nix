@@ -2,17 +2,19 @@
 
 buildPythonPackage rec {
   pname = "PyChromecast";
-  version = "7.7.1";
+  version = "8.1.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "09mdz1y1bfwkszxsawffwy1mr7lc1j2rma571qkb60sk76107zfn";
+    sha256 = "sha256-3wKV9lPO51LeOM+O8J8TrZeCxTkk37qhkcpivV4dzhQ=";
   };
 
   disabled = !isPy3k;
 
   propagatedBuildInputs = [ requests zeroconf protobuf casttube ];
 
+  # no tests available
+  doCheck = false;
   pythonImportsCheck = [ "pychromecast" ];
 
   meta = with lib; {

@@ -1,11 +1,12 @@
-{ stdenv, lib, fetchpatch, fetchurl, fetchFromGitHub, autoconf, automake, libtool, makeWrapper, linuxHeaders
-, pkgconfig, cmake, gnumake, yasm, python2Packages
+{ stdenv, lib, fetchurl, fetchFromGitHub, autoconf, automake, libtool, makeWrapper, linuxHeaders
+, pkg-config, cmake, gnumake, yasm, python3Packages
 , libgcrypt, libgpgerror, libunistring
-, boost, avahi, lame, autoreconfHook
+, boost, avahi, lame
 , gettext, pcre-cpp, yajl, fribidi, which
 , openssl, gperf, tinyxml2, taglib, libssh, swig, jre_headless
+, gtest, ncurses, spdlog
 , libxml2, systemd
-, alsaLib, libGLU, libGL, glew, fontconfig, freetype, ftgl
+, alsaLib, libGLU, libGL, fontconfig, freetype, ftgl
 , libjpeg, libpng, libtiff
 , libmpeg2, libsamplerate, libmad
 , libogg, libvorbis, flac, libxslt
@@ -42,17 +43,18 @@ assert udevSupport  -> udev != null;
 assert usbSupport   -> libusb-compat-0_1 != null && ! udevSupport; # libusb-compat-0_1 won't be used if udev is avaliable
 assert vdpauSupport -> libvdpau != null;
 assert useWayland -> wayland != null && wayland-protocols != null && waylandpp != null && libxkbcommon != null;
+assert useGbm || useWayland || x11Support;
 
 let
-  kodiReleaseDate = "20200728";
-  kodiVersion = "18.9";
-  rel = "Leia";
+  kodiReleaseDate = "20210219";
+  kodiVersion = "19.0";
+  rel = "Matrix";
 
   kodi_src = fetchFromGitHub {
     owner  = "xbmc";
     repo   = "xbmc";
     rev    = "${kodiVersion}-${rel}";
-    sha256 = "0nnf7823pixj6n2fkjc8rbdjwayvhlbglij2by4rnjzzfgmqmw20";
+    sha256 = "097dg6a7v4ia85jx1pmlpwzdpqcqxlrmniqd005q73zvgj67zc2p";
   };
 
   cmakeProto = fetchurl {
@@ -83,14 +85,13 @@ let
         repo  = name;
         inherit rev sha256;
       };
-      enableParallelBuilding = true;
     } // attrs');
 
   ffmpeg = kodiDependency rec {
     name    = "FFmpeg";
-    version = "4.0.3";
-    rev     = "${version}-${rel}-18.2";
-    sha256  = "1krsjlr949iy5l6ljxancza1yi6w1annxc5s6k283i9mb15qy8cy";
+    version = "4.3.1";
+    rev     = "${version}-${rel}-Beta1";
+    sha256  = "1c5rwlxn6xj501iw7masdv2p6wb9rkmd299lmlkx97sw1kvxvg2w";
     preConfigure = ''
       cp ${kodi_src}/tools/depends/target/ffmpeg/{CMakeLists.txt,*.cmake} .
       sed -i 's/ --cpu=''${CPU}//' CMakeLists.txt
@@ -100,11 +101,11 @@ let
       "-DCROSSCOMPILING=ON"
       "-DCPU=${stdenv.hostPlatform.parsed.cpu.name}"
       "-DOS=${stdenv.hostPlatform.parsed.kernel.name}"
-      "-DPKG_CONFIG_EXECUTABLE=pkgconfig"
+      "-DPKG_CONFIG_EXECUTABLE=pkg-config"
     ];
     buildInputs = [ libidn libtasn1 p11-kit zlib libva ]
       ++ lib.optional  vdpauSupport    libvdpau;
-    nativeBuildInputs = [ cmake nasm pkgconfig gnutls ];
+    nativeBuildInputs = [ cmake nasm pkg-config gnutls ];
   };
 
   # We can build these externally but FindLibDvd.cmake forces us to build it
@@ -115,7 +116,7 @@ let
     rev               = "${version}-${rel}-Beta-5";
     sha256            = "0j41ydzx0imaix069s3z07xqw9q95k7llh06fc27dcn6f7b8ydyl";
     buildInputs       = [ linuxHeaders ];
-    nativeBuildInputs = [ cmake pkgconfig ];
+    nativeBuildInputs = [ cmake pkg-config ];
     postPatch = ''
       rm -rf msvc
 
@@ -134,7 +135,7 @@ let
     rev               = "${version}-${rel}-Alpha-3";
     sha256            = "0qwlf4lgahxqxk1r2pzl866mi03pbp7l1fc0rk522sc0ak2s9jhb";
     buildInputs       = [ libdvdcss libdvdread ];
-    nativeBuildInputs = [ cmake pkgconfig ];
+    nativeBuildInputs = [ cmake pkg-config ];
     postPatch         = cmakeProtoPatch;
     postInstall = ''
       mv $out/lib/liblibdvdnav.so $out/lib/libdvdnav.so
@@ -147,10 +148,16 @@ let
     rev               = "${version}-${rel}-Alpha-3";
     sha256            = "1xxn01mhkdnp10cqdr357wx77vyzfb5glqpqyg8m0skyi75aii59";
     buildInputs       = [ libdvdcss ];
-    nativeBuildInputs = [ cmake pkgconfig ];
+    nativeBuildInputs = [ cmake pkg-config ];
     configureFlags    = [ "--with-libdvdcss" ];
     postPatch         = cmakeProtoPatch;
   };
+
+  kodi_platforms =
+    lib.optional useGbm "gbm" ++
+    lib.optional useWayland "wayland" ++
+    lib.optional x11Support "x11"
+  ;
 
 in stdenv.mkDerivation {
     name = "kodi-${lib.optionalString useWayland "wayland-"}${kodiVersion}";
@@ -159,10 +166,11 @@ in stdenv.mkDerivation {
 
     buildInputs = [
       gnutls libidn libtasn1 nasm p11-kit
-      libxml2 python2Packages.python
+      libxml2 python3Packages.python
       boost libmicrohttpd
       gettext pcre-cpp yajl fribidi libva libdrm
       openssl gperf tinyxml2 taglib libssh
+      gtest ncurses spdlog
       alsaLib libGL libGLU fontconfig freetype ftgl
       libjpeg libpng libtiff
       libmpeg2 libsamplerate libmad
@@ -209,9 +217,9 @@ in stdenv.mkDerivation {
       doxygen
       makeWrapper
       which
-      pkgconfig gnumake
+      pkg-config gnumake
       autoconf automake libtool # still needed for some components. Check if that is the case with 19.0
-      jre_headless yasm gettext python2Packages.python flatbuffers
+      jre_headless yasm gettext python3Packages.python flatbuffers
 
       # for TexturePacker
       giflib zlib libpng libjpeg lzo
@@ -222,6 +230,8 @@ in stdenv.mkDerivation {
     ];
 
     cmakeFlags = [
+      "-DAPP_RENDER_SYSTEM=${if useGbm then "gles" else "gl"}"
+      "-DCORE_PLATFORM_NAME=${lib.concatStringsSep " " kodi_platforms}"
       "-Dlibdvdcss_URL=${libdvdcss.src}"
       "-Dlibdvdnav_URL=${libdvdnav.src}"
       "-Dlibdvdread_URL=${libdvdread.src}"
@@ -232,17 +242,10 @@ in stdenv.mkDerivation {
       "-DLIRC_DEVICE=/run/lirc/lircd"
       "-DSWIG_EXECUTABLE=${buildPackages.swig}/bin/swig"
       "-DFLATBUFFERS_FLATC_EXECUTABLE=${buildPackages.flatbuffers}/bin/flatc"
-      "-DPYTHON_EXECUTABLE=${buildPackages.python2Packages.python}/bin/python"
+      "-DPYTHON_EXECUTABLE=${buildPackages.python3Packages.python}/bin/python"
     ] ++ lib.optional useWayland [
-      "-DCORE_PLATFORM_NAME=wayland"
-      "-DWAYLAND_RENDER_SYSTEM=gl"
       "-DWAYLANDPP_SCANNER=${buildPackages.waylandpp}/bin/wayland-scanner++"
-    ] ++ lib.optional useGbm [
-      "-DCORE_PLATFORM_NAME=gbm"
-      "-DGBM_RENDER_SYSTEM=gles"
     ];
-
-    enableParallelBuilding = true;
 
     # 14 tests fail but the biggest issue is that every test takes 30 seconds -
     # I'm guessing there is a thing waiting to time out
@@ -251,22 +254,22 @@ in stdenv.mkDerivation {
     # Need these tools on the build system when cross compiling,
     # hacky, but have found no other way.
     preConfigure = lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
-      CXX=c++ LD=ld make -C tools/depends/native/JsonSchemaBuilder
+      CXX=${stdenv.cc.targetPrefix}c++ LD=ld make -C tools/depends/native/JsonSchemaBuilder
       cmakeFlags+=" -DWITH_JSONSCHEMABUILDER=$PWD/tools/depends/native/JsonSchemaBuilder/bin"
 
-      CXX=c++ LD=ld make EXTRA_CONFIGURE= -C tools/depends/native/TexturePacker
+      CXX=${stdenv.cc.targetPrefix}c++ LD=ld make EXTRA_CONFIGURE= -C tools/depends/native/TexturePacker
       cmakeFlags+=" -DWITH_TEXTUREPACKER=$PWD/tools/depends/native/TexturePacker/bin"
     '';
 
     postPatch = ''
-      substituteInPlace xbmc/platform/linux/LinuxTimezone.cpp \
+      substituteInPlace xbmc/platform/posix/PosixTimezone.cpp \
         --replace 'usr/share/zoneinfo' 'etc/zoneinfo'
     '';
 
     postInstall = ''
       for p in $(ls $out/bin/) ; do
         wrapProgram $out/bin/$p \
-          --prefix PATH            ":" "${lib.makeBinPath ([ python2Packages.python glxinfo ] ++ lib.optional x11Support xdpyinfo)}" \
+          --prefix PATH            ":" "${lib.makeBinPath ([ python3Packages.python glxinfo ] ++ lib.optional x11Support xdpyinfo)}" \
           --prefix LD_LIBRARY_PATH ":" "${lib.makeLibraryPath
               ([ curl systemd libmad libvdpau libcec libcec_platform libass ]
                  ++ lib.optional nfsSupport libnfs
@@ -282,10 +285,10 @@ in stdenv.mkDerivation {
     installCheckPhase = "$out/bin/kodi --version";
 
     passthru = {
-      pythonPackages = python2Packages;
+      pythonPackages = python3Packages;
     };
 
-    meta = with stdenv.lib; {
+    meta = with lib; {
       description = "Media center";
       homepage    = "https://kodi.tv/";
       license     = licenses.gpl2;

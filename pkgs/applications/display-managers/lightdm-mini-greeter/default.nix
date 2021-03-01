@@ -1,17 +1,17 @@
-{ stdenv, linkFarm, lightdm-mini-greeter, fetchFromGitHub, autoreconfHook, pkgconfig, lightdm, gtk3, glib, gdk-pixbuf, wrapGAppsHook, librsvg }:
+{ lib, stdenv, linkFarm, lightdm-mini-greeter, fetchFromGitHub, autoreconfHook, pkg-config, lightdm, gtk3, glib, gdk-pixbuf, wrapGAppsHook, librsvg }:
 
 stdenv.mkDerivation rec {
   pname = "lightdm-mini-greeter";
-  version = "0.4.0";
+  version = "0.5.0";
 
   src = fetchFromGitHub {
     owner = "prikhi";
     repo = "lightdm-mini-greeter";
     rev = version;
-    sha256 = "10hga7pmfyjdvj4xwm3djwrhk50brcpycj3p3c57pa0vnx4ill3s";
+    sha256 = "sha256-cVOnd3k+9hFQjROiwPpxZcCxD2NiH1eclJHF88eV6BM=";
   };
 
-  nativeBuildInputs = [ autoreconfHook pkgconfig wrapGAppsHook ];
+  nativeBuildInputs = [ autoreconfHook pkg-config wrapGAppsHook ];
   buildInputs = [ lightdm gtk3 glib gdk-pixbuf librsvg ];
 
   configureFlags = [ "--sysconfdir=/etc" ];
@@ -27,7 +27,7 @@ stdenv.mkDerivation rec {
     name = "lightdm-mini-greeter.desktop";
   }];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "A minimal, configurable, single-user GTK3 LightDM greeter";
     homepage = "https://github.com/prikhi/lightdm-mini-greeter";
     license = licenses.gpl3;

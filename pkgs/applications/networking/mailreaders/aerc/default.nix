@@ -1,7 +1,6 @@
-{ stdenv, buildGoModule, fetchurl
-, go, ncurses, notmuch, scdoc
-, python3, perl, w3m, dante
-, fetchFromGitHub
+{ lib, buildGoModule, fetchurl
+, ncurses, notmuch, scdoc
+, python3, w3m, dante
 }:
 
 buildGoModule rec {
@@ -48,12 +47,12 @@ buildGoModule rec {
 
   postFixup = ''
     wrapProgram $out/bin/aerc --prefix PATH ":" \
-      "$out/share/aerc/filters:${stdenv.lib.makeBinPath [ ncurses ]}"
+      "$out/share/aerc/filters:${lib.makeBinPath [ ncurses ]}"
     wrapProgram $out/share/aerc/filters/html --prefix PATH ":" \
-      ${stdenv.lib.makeBinPath [ w3m dante ]}
+      ${lib.makeBinPath [ w3m dante ]}
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "An email client for your terminal";
     homepage = "https://aerc-mail.org/";
     maintainers = with maintainers; [ tadeokondrak ];

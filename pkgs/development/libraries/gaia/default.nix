@@ -4,7 +4,7 @@
 , libyaml
 , swig
 , eigen
-, pkgconfig
+, pkg-config
 , python2
 , wafHook
 , makeWrapper
@@ -31,15 +31,14 @@ stdenv.mkDerivation rec {
   };
 
   # Fix installation error when waf tries to put files in /etc/
-  prePatch = ''
-  '' + lib.optionalString cyclopsSupport ''
+  prePatch = "" + lib.optionalString cyclopsSupport ''
     substituteInPlace src/wscript \
       --replace "/etc/cyclops" "$out/etc/cyclops" \
       --replace "/etc/init.d" "$out/etc/init.d"
   '';
 
   nativeBuildInputs = [
-    pkgconfig
+    pkg-config
     python2 # For wafHook
     swig
     wafHook
@@ -72,8 +71,7 @@ stdenv.mkDerivation rec {
     ++ lib.optionals (cyclopsSupport) [ "--with-cyclops" ]
   ;
 
-  postFixup = ''
-  ''
+  postFixup = ""
     + lib.optionalString pythonSupport ''
       wrapPythonPrograms
     ''

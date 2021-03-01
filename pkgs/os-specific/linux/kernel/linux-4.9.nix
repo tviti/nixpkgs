@@ -1,11 +1,11 @@
-{ stdenv, buildPackages, fetchurl, perl, buildLinux, ... } @ args:
+{ buildPackages, fetchurl, perl, buildLinux, ... } @ args:
 
 buildLinux (args // rec {
-  version = "4.9.249";
+  version = "4.9.258";
   extraMeta.branch = "4.9";
 
   src = fetchurl {
     url = "mirror://kernel/linux/kernel/v4.x/linux-${version}.tar.xz";
-    sha256 = "0kjcw0vgga9msgqnipgg028v3rcc5am2d094v3hqkkjvzyb8dwxi";
+    sha256 = "1kf8wlcf8gkpnglx1ggn1c3xfz4yx9995yb919mvin7nd7hghy6l";
   };
 } // (args.argsOverride or {}))

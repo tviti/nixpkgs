@@ -1,14 +1,14 @@
-{ stdenv, fetchFromGitHub, gtk3, pantheon, breeze-icons, gnome-icon-theme, hicolor-icon-theme }:
+{ lib, stdenv, fetchFromGitHub, gtk3, pantheon, breeze-icons, gnome-icon-theme, hicolor-icon-theme }:
 
 stdenv.mkDerivation rec {
   pname = "papirus-icon-theme";
-  version = "20200901";
+  version = "20210201";
 
   src = fetchFromGitHub {
     owner = "PapirusDevelopmentTeam";
     repo = pname;
     rev = version;
-    sha256 = "00khqbd7jz97q1kd43kkm6yaa40ml36rh04s76sgbm58srs66v3c";
+    sha256 = "sha256-TQEpNFmsloq1jIg6QsuY8kllINpmwJCY+Anwker6Z5M=";
   };
 
   nativeBuildInputs = [
@@ -33,7 +33,7 @@ stdenv.mkDerivation rec {
     done
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Papirus icon theme";
     homepage = "https://github.com/PapirusDevelopmentTeam/papirus-icon-theme";
     license = licenses.lgpl3;

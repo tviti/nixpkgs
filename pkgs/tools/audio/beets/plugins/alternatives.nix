@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, beets, pythonPackages }:
+{ fetchFromGitHub, beets, pythonPackages }:
 
 pythonPackages.buildPythonApplication rec {
   pname = "beets-alternatives";
@@ -19,7 +19,7 @@ pythonPackages.buildPythonApplication rec {
   meta = {
     description = "Beets plugin to manage external files";
     homepage = "https://github.com/geigerzaehler/beets-alternatives";
-    maintainers = [ stdenv.lib.maintainers.aszlig ];
-    license = stdenv.lib.licenses.mit;
+    maintainers = [ lib.maintainers.aszlig ];
+    license = lib.licenses.mit;
   };
 }

@@ -4,26 +4,21 @@
 , makeWrapper
 , buildkit
 , cni-plugins
-, extraPackages ? []
+, extraPackages ? [ ]
 }:
 
-let
-  binPath = lib.makeBinPath ([
-    buildkit
-  ] ++ extraPackages);
-in
 buildGoModule rec {
   pname = "nerdctl";
-  version = "0.4.0";
+  version = "0.6.1";
 
   src = fetchFromGitHub {
     owner = "AkihiroSuda";
     repo = pname;
     rev = "v${version}";
-    sha256 = "0vjcbvd5yrasw97hd5mrn6cdjvfv2r03z7g1wczlszlcs8gr6nxw";
+    sha256 = "sha256-zexvTPEQw7iW1d3ahHmqTn+UaT/bJMlr1sVlWErc2ck=";
   };
 
-  vendorSha256 = "181lp9l4i0qpiqm8wbxa4ldi1j5bm3ygmanz1xh3mkjanl0pwqjr";
+  vendorSha256 = "sha256-bX1GfKbAbdEAnW3kPNsbF/cJWufxvuhm//G88qJ3u08=";
 
   nativeBuildInputs = [ makeWrapper ];
 
@@ -35,17 +30,33 @@ buildGoModule rec {
     "-X github.com/AkihiroSuda/nerdctl/pkg/version.Revision=<unknown>"
   ];
 
+  # Many checks require a containerd socket and running nerdctl after it's built
+  doCheck = false;
+
   postInstall = ''
     wrapProgram $out/bin/nerdctl \
-      --prefix PATH : "${binPath}" \
+      --prefix PATH : "${lib.makeBinPath ([ buildkit ] ++ extraPackages)}" \
       --prefix CNI_PATH : "${cni-plugins}/bin"
   '';
 
+  doInstallCheck = true;
+  installCheckPhase = ''
+    runHook preInstallCheck
+    # nerdctl expects XDG_RUNTIME_DIR to be set
+    export XDG_RUNTIME_DIR=$TMPDIR
+
+    $out/bin/nerdctl --help
+    # --version will error without containerd.sock access
+    $out/bin/nerdctl --help | grep "${version}"
+    runHook postInstallCheck
+  '';
+
   meta = with lib; {
+    homepage = "https://github.com/AkihiroSuda/nerdctl/";
+    changelog = "https://github.com/AkihiroSuda/nerdctl/releases/tag/v${version}";
     description = "A Docker-compatible CLI for containerd";
-    homepage = src.meta.homepage;
     license = licenses.asl20;
-    platforms = platforms.linux;
     maintainers = with maintainers; [ jk ];
+    platforms = platforms.linux;
   };
 }

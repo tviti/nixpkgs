@@ -1,20 +1,20 @@
-{ stdenv
+{ lib
 , buildGoModule
 , fetchFromGitHub
 }:
 
 buildGoModule rec {
   pname = "dasel";
-  version = "1.12.0";
+  version = "1.13.2";
 
   src = fetchFromGitHub {
     owner = "TomWright";
     repo = pname;
     rev = "v${version}";
-    sha256 = "69igz0Q7pT0f6PsbZWHcwUiTKRTTzj7r5E6E5ExUoJo=";
+    sha256 = "sha256-++8vTK0OR44Mcdh5g2bJEq7aO+fWySKw0XlSz2KJNio=";
   };
 
-  vendorSha256 = "BdX4DO77mIf/+aBdkNVFUzClsIml1UMcgvikDbbdgcY=";
+  vendorSha256 = "sha256-BdX4DO77mIf/+aBdkNVFUzClsIml1UMcgvikDbbdgcY=";
 
   buildFlagsArray = ''
     -ldflags=-s -w -X github.com/tomwright/dasel/internal.Version=${version}
@@ -31,7 +31,7 @@ buildGoModule rec {
     fi
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Query and update data structures from the command line";
     longDescription = ''
       Dasel (short for data-selector) allows you to query and modify data structures using selector strings.

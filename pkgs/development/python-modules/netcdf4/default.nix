@@ -1,4 +1,4 @@
-{ stdenv, lib, buildPythonPackage, fetchPypi, isPyPy, pytest
+{ lib, buildPythonPackage, fetchPypi, isPyPy, pytest
 , numpy, zlib, netcdf, hdf5, curl, libjpeg, cython, cftime
 }:
 buildPythonPackage rec {
@@ -42,7 +42,7 @@ buildPythonPackage rec {
   CURL_DIR=curl.dev;
   JPEG_DIR=libjpeg.dev;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Interface to netCDF library (versions 3 and 4)";
     homepage = "https://pypi.python.org/pypi/netCDF4";
     license = licenses.free;  # Mix of license (all MIT* like)

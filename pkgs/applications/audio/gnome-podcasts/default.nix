@@ -1,14 +1,13 @@
-{ stdenv
+{ lib
 , rustPlatform
 , fetchFromGitLab
-, fetchpatch
 , meson
 , ninja
 , gettext
 , cargo
 , rustc
 , python3
-, pkgconfig
+, pkg-config
 , glib
 , libhandy_0
 , gtk3
@@ -36,7 +35,7 @@ rustPlatform.buildRustPackage rec {
   nativeBuildInputs = [
     meson
     ninja
-    pkgconfig
+    pkg-config
     gettext
     cargo
     rustc
@@ -72,7 +71,7 @@ rustPlatform.buildRustPackage rec {
     patchShebangs scripts/compile-gschema.py scripts/cargo.sh scripts/test.sh
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Listen to your favorite podcasts";
     homepage = "https://wiki.gnome.org/Apps/Podcasts";
     license = licenses.gpl3;

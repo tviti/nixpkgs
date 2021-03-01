@@ -76,14 +76,9 @@ buildPythonPackage rec {
     nbconvert
   ];
 
-  postConfigure = ''
-    substituteInPlace setup.py \
-      --replace "'numba >=0.37.0,<0.49'" "'numba'"
-  '';
-
   # dask doesn't do well with large core counts
   checkPhase = ''
-    pytest -n $NIX_BUILD_CORES datashader -k 'not dask.array'
+    pytest -n $NIX_BUILD_CORES datashader -k 'not dask.array and not test_simple_nested'
   '';
 
   meta = with lib; {

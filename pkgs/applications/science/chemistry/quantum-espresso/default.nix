@@ -1,6 +1,7 @@
-{ stdenv, fetchurl
+{ lib, stdenv, fetchurl
 , gfortran, fftw, blas, lapack
-, mpi ? null
+, useMpi ? false
+, mpi
 }:
 
 stdenv.mkDerivation rec {
@@ -21,13 +22,13 @@ stdenv.mkDerivation rec {
   '';
 
   buildInputs = [ fftw blas lapack gfortran ]
-    ++ (stdenv.lib.optionals (mpi != null) [ mpi ]);
+    ++ (lib.optionals useMpi [ mpi ]);
 
-configureFlags = if (mpi != null) then [ "LD=${mpi}/bin/mpif90" ] else [ "LD=${gfortran}/bin/gfortran" ];
+configureFlags = if useMpi then [ "LD=${mpi}/bin/mpif90" ] else [ "LD=${gfortran}/bin/gfortran" ];
 
   makeFlags = [ "all" ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Electronic-structure calculations and materials modeling at the nanoscale";
     longDescription = ''
         Quantum ESPRESSO is an integrated suite of Open-Source computer codes for

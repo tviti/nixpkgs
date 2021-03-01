@@ -38,7 +38,7 @@
 , udev
 , xorg
 , zlib
-, xdg_utils
+, xdg-utils
 , wrapGAppsHook
 }:
 
@@ -79,7 +79,7 @@ rpath = lib.makeLibraryPath [
   nss
   pango
   udev
-  xdg_utils
+  xdg-utils
   xorg.libxcb
   zlib
 ];
@@ -88,11 +88,11 @@ in
 
 stdenv.mkDerivation rec {
   pname = "brave";
-  version = "1.18.77";
+  version = "1.20.110";
 
   src = fetchurl {
     url = "https://github.com/brave/brave-browser/releases/download/v${version}/brave-browser_${version}_amd64.deb";
-    sha256 = "AV3bqtWaoy6AVnt8K/Qo+7hguAIsPJPZhgLSeOvJ7JY=";
+    sha256 = "0xmf74qh85f2jvi90q4cw2n7cvx5p46xmdr2iznfy09hdsymxfry";
   };
 
   dontConfigure = true;
@@ -144,8 +144,8 @@ stdenv.mkDerivation rec {
       done
 
       # Replace xdg-settings and xdg-mime
-      ln -sf ${xdg_utils}/bin/xdg-settings $out/opt/brave.com/brave/xdg-settings
-      ln -sf ${xdg_utils}/bin/xdg-mime $out/opt/brave.com/brave/xdg-mime
+      ln -sf ${xdg-utils}/bin/xdg-settings $out/opt/brave.com/brave/xdg-settings
+      ln -sf ${xdg-utils}/bin/xdg-mime $out/opt/brave.com/brave/xdg-mime
   '';
 
   installCheckPhase = ''
@@ -155,7 +155,7 @@ stdenv.mkDerivation rec {
 
   passthru.updateScript = ./update.sh;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "https://brave.com/";
     description = "Privacy-oriented browser for Desktop and Laptop computers";
     changelog = "https://github.com/brave/brave-browser/blob/v${version}/CHANGELOG.md";

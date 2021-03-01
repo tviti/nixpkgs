@@ -10,7 +10,7 @@
 , at-spi2-atk
 , coreutils
 , gawk
-, xdg_utils
+, xdg-utils
 , systemd }:
 
 stdenv.mkDerivation rec {
@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   ];
 
   preFixup = ''
-    gappsWrapperArgs+=(--prefix PATH : "${coreutils}/bin:${gawk}/bin:${xdg_utils}/bin")
+    gappsWrapperArgs+=(--prefix PATH : "${coreutils}/bin:${gawk}/bin:${xdg-utils}/bin")
   '';
 
   installPhase = ''
@@ -78,7 +78,7 @@ stdenv.mkDerivation rec {
     done;
   '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Microsoft Teams";
     homepage = "https://teams.microsoft.com";
     downloadPage = "https://teams.microsoft.com/downloads";

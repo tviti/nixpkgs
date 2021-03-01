@@ -1,4 +1,4 @@
-{ stdenv
+{ lib, stdenv
 , fetchurl
 , perl
 , python3
@@ -7,7 +7,7 @@
 , gperf
 , cmake
 , ninja
-, pkgconfig
+, pkg-config
 , gettext
 , gobject-introspection
 , libnotify
@@ -55,7 +55,7 @@
 
 assert enableGeoLocation -> geoclue2 != null;
 
-with stdenv.lib;
+with lib;
 
 stdenv.mkDerivation rec {
   pname = "webkitgtk";
@@ -78,7 +78,7 @@ stdenv.mkDerivation rec {
     ./libglvnd-headers.patch
   ];
 
-  preConfigure = stdenv.lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
+  preConfigure = lib.optionalString (stdenv.hostPlatform != stdenv.buildPlatform) ''
     # Ignore gettext in cmake_prefix_path so that find_program doesn't
     # pick up the wrong gettext. TODO: Find a better solution for
     # this, maybe make cmake not look up executables in
@@ -94,11 +94,11 @@ stdenv.mkDerivation rec {
     gperf
     ninja
     perl
-    pkgconfig
+    pkg-config
     python3
     ruby
     glib # for gdbus-codegen
-  ] ++ stdenv.lib.optionals stdenv.isLinux [
+  ] ++ lib.optionals stdenv.isLinux [
     wayland # for wayland-scanner
   ];
 
@@ -155,6 +155,9 @@ stdenv.mkDerivation rec {
     "-DPORT=GTK"
     "-DUSE_LIBHYPHEN=OFF"
     "-DUSE_WPE_RENDERER=OFF"
+    # ensure backward compatibility with the latest version of icu:
+    # http://linuxfromscratch.org/blfs/view/svn/x/webkitgtk.html
+    "-DCMAKE_CXX_FLAGS=-DU_DEFINE_FALSE_AND_TRUE=1"
   ] ++ optionals stdenv.isDarwin [
     "-DENABLE_GRAPHICS_CONTEXT_3D=OFF"
     "-DENABLE_GTKDOC=OFF"

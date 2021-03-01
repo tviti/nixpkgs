@@ -1,25 +1,25 @@
 { buildGoModule
 , fetchFromGitHub
-, stdenv
+, lib
 }:
 
 buildGoModule rec {
   pname = "teler";
-  version = "1.0.1";
+  version = "1.0.3";
 
   src = fetchFromGitHub {
     owner = "kitabisa";
     repo = "teler";
     rev = "v${version}";
-    sha256 = "07pfqgms5cj4y6zm984qjmmw1c8j9yjbgrp2spi9vzk96s3k3qn3";
+    sha256 = "sha256-6OeGlpimQtw4w26HRzw2wmd3wjASY199p8XXPD/JMy8=";
   };
 
-  vendorSha256 = "06szi2jw3nayd7pljjlww2gsllgnfg8scnjmc6qv5xl6gf797kdz";
+  vendorSha256 = "sha256-L+wjurURpesCA2IK0r1sxvOUvNJT1wiRp75kpe6LH5s=";
 
   # test require internet access
   doCheck = false;
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     description = "Real-time HTTP Intrusion Detection";
     longDescription = ''
       teler is an real-time intrusion detection and threat alert
