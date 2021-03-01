@@ -1,7 +1,7 @@
 { mkDerivation, lib, fetchFromGitHub, cmake, ninja, flex, bison, proj, geos, xlibsWrapper, sqlite, gsl
 , qwt, fcgi, python3Packages, libspatialindex, libspatialite, postgresql
 , txt2tags, openssl, libzip, hdf5, netcdf, exiv2
-, qtbase, qt3d, qtwebkit, qtsensors, qca-qt5, qtkeychain, qscintilla, qtserialport, qtxmlpatterns
+, qtbase, qtwebkit, qtsensors, qca-qt5, qtkeychain, qscintilla, qtserialport, qtxmlpatterns
 , withGrass ? true, grass
 , withWebKit ? true, qtwebkit
 }:
@@ -29,7 +29,7 @@ in mkDerivation rec {
 
   buildInputs = [ openssl proj geos xlibsWrapper sqlite gsl qwt exiv2
     fcgi libspatialindex libspatialite postgresql txt2tags libzip hdf5 netcdf
-    qtbase qtwebkit qtsensors qca-qt5 qtkeychain qscintilla qtserialport qtxmlpatterns qt3d ] ++
+    qtbase qtwebkit qtsensors qca-qt5 qtkeychain qscintilla qtserialport qtxmlpatterns] ++
     (lib.optional withGrass grass) ++ pythonBuildInputs;
 
   nativeBuildInputs = [ cmake flex bison ninja ];
@@ -45,9 +45,7 @@ in mkDerivation rec {
 
   cmakeFlags = [ "-DCMAKE_SKIP_BUILD_RPATH=OFF"
                  "-DPYQT5_SIP_DIR=${python3Packages.pyqt5}/share/sip/PyQt5"
-                 "-DQSCI_SIP_DIR=${python3Packages.qscintilla-qt5}/share/sip/PyQt5"
-                 "-DWITH_3D=True"
-               ] ++
+                 "-DQSCI_SIP_DIR=${python3Packages.qscintilla-qt5}/share/sip/PyQt5" ] ++
                  lib.optional withGrass "-DGRASS_PREFIX7=${grass}/${grass.name}";
 
   meta = {
