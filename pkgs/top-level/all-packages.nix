@@ -24664,6 +24664,7 @@ in
   qemu-utils = callPackage ../applications/virtualization/qemu/utils.nix {};
 
   qgis-unwrapped = libsForQt5.callPackage ../applications/gis/qgis/unwrapped.nix {
+    withWebKit = false;
     withGrass = false;
   };
 
