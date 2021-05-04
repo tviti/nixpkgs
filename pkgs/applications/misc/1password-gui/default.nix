@@ -8,11 +8,11 @@
 
 stdenv.mkDerivation rec {
   pname = "1password";
-  version = "0.9.14-4";
+  version = "8.0.30";
 
   src = fetchurl {
     url = "https://onepassword.s3.amazonaws.com/linux/appimage/${pname}-${version}.AppImage";
-    hash = "sha256-ZEpHeBeP2LpjABWD1eQxUORUKsRWvZ8WYa5IxSRLeXc=";
+    hash = "sha256-j+fp/f8nta+OOuOFU4mmUrGYlVmAqdaXO4rLJ0in+m8=";
   };
 
   nativeBuildInputs = [ makeWrapper ];

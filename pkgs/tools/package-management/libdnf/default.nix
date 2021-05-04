@@ -3,16 +3,14 @@
 
 gcc9Stdenv.mkDerivation rec {
   pname = "libdnf";
-  version = "0.58.0";
+  version = "0.61.1";
 
   src = fetchFromGitHub {
     owner = "rpm-software-management";
     repo = pname;
     rev = version;
-    sha256 = "0an8giv0lm0qqc76fpmqg42ra081mlj62b9r0s1p0sgb3270l76l";
+    sha256 = "sha256-ad0Q/8FEaSqsuA6tVC5SB4bTrGJY/8Xb8S8zrsDIyVc=";
   };
-
-  patches = lib.optionals stdenv.isDarwin [ ./darwin.patch ];
 
   nativeBuildInputs = [
     cmake

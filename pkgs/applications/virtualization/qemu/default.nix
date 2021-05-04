@@ -39,7 +39,7 @@ let
 in
 
 stdenv.mkDerivation rec {
-  version = "5.2.0";
+  version = "6.0.0";
   pname = "qemu"
     + lib.optionalString xenSupport "-xen"
     + lib.optionalString hostCpuOnly "-host-cpu-only"
@@ -47,7 +47,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url= "https://download.qemu.org/qemu-${version}.tar.xz";
-    sha256 = "1g0pvx4qbirpcn9mni704y03n3lvkmw2c0rbcwvydyr8ns4xh66b";
+    sha256 = "1f9hz8rf12jm8baa7kda34yl4hyl0xh0c4ap03krfjx23i3img47";
   };
 
   nativeBuildInputs = [ python python.pkgs.sphinx pkg-config flex bison meson ninja ]
@@ -77,7 +77,6 @@ stdenv.mkDerivation rec {
     ++ optionals libiscsiSupport [ libiscsi ]
     ++ optionals smbdSupport [ samba ];
 
-  enableParallelBuilding = true;
   dontUseMesonConfigure = true; # meson's configurePhase isn't compatible with qemu build
 
   outputs = [ "out" "ga" ];
@@ -102,7 +101,11 @@ stdenv.mkDerivation rec {
     })
   ];
 
-  hardeningDisable = [ "stackprotector" ];
+  # Otherwise tries to ensure /var/run exists.
+  postPatch = ''
+    sed -i "/install_subdir('run', install_dir: get_option('localstatedir'))/d" \
+        qga/meson.build
+  '';
 
   preConfigure = ''
     unset CPP # intereferes with dependency calculation
@@ -111,6 +114,8 @@ stdenv.mkDerivation rec {
     patchShebangs .
     # avoid conflicts with libc++ include for <version>
     mv VERSION QEMU_VERSION
+    substituteInPlace configure \
+      --replace '$source_path/VERSION' '$source_path/QEMU_VERSION'
     substituteInPlace meson.build \
       --replace "'VERSION'" "'QEMU_VERSION'"
   '' + optionalString stdenv.hostPlatform.isMusl ''
@@ -122,6 +127,7 @@ stdenv.mkDerivation rec {
       "--enable-docs"
       "--enable-tools"
       "--enable-guest-agent"
+      "--localstatedir=/var"
       "--sysconfdir=/etc"
     ]
     ++ optional numaSupport "--enable-numa"
@@ -147,7 +153,7 @@ stdenv.mkDerivation rec {
 
   postFixup = ''
     # the .desktop is both invalid and pointless
-    test -e $out/share/applications/qemu.desktop && rm -f $out/share/applications/qemu.desktop
+    rm -f $out/share/applications/qemu.desktop
 
     # copy qemu-ga (guest agent) to separate output
     mkdir -p $ga/bin
@@ -173,11 +179,14 @@ stdenv.mkDerivation rec {
     qemu-system-i386 = "bin/qemu-system-i386";
   };
 
+  # Builds in ~3h with 2 cores, and ~20m with a big-parallel builder.
+  requiredSystemFeatures = [ "big-parallel" ];
+
   meta = with lib; {
     homepage = "http://www.qemu.org/";
     description = "A generic and open source machine emulator and virtualizer";
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [ eelco ];
-    platforms = platforms.linux ++ platforms.darwin;
+    maintainers = with maintainers; [ eelco qyliss ];
+    platforms = platforms.unix;
   };
 }

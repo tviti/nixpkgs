@@ -15,9 +15,6 @@ lib.makeScope pkgs.newScope (self: with self; {
 
   automakeAddFlags = pkgs.makeSetupHook { } ./automakeAddFlags.sh;
 
-  # Samba is a rather heavy dependency
-  gvfs = pkgs.gvfs.override { samba = null; };
-
   #### CORE
 
   exo = callPackage ./core/exo { };
@@ -101,8 +98,6 @@ lib.makeScope pkgs.newScope (self: with self; {
   xfwm4-themes = callPackage ./art/xfwm4-themes { };
 
   #### PANEL PLUGINS
-
-  xfce4-vala-panel-appmenu-plugin = callPackage ./panel-plugins/xfce4-vala-panel-appmenu-plugin { };
 
   xfce4-battery-plugin = callPackage ./panel-plugins/xfce4-battery-plugin { };
 
