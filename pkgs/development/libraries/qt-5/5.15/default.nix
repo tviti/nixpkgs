@@ -169,6 +169,8 @@ let
 
       mkDerivation = mkDerivationWith stdenvActual.mkDerivation;
 
+      qt3d = callPackage ../modules/qt3d.nix {};
+      
       qtbase = callPackage ../modules/qtbase.nix {
         inherit (srcs.qtbase) src version;
         patches = patches.qtbase;
